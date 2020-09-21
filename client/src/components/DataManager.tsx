@@ -10,12 +10,16 @@ import {
   getPendingTx,
   TxTrackerActions,
 } from "../stores/TxTrackerStore";
+import { NftContext, NftActions } from "../stores/NftStore";
+import { nftService } from "../services/NftService";
+import { sudtService } from "../services/SudtService";
 
 /* The DataManager fetches new data when it's needed. This takes the burden off the other components to handle data fetches, and placing that data in appropriate stores. Other components simply tell the fetcher the relevant update, and subscribe to the incoming state via contexts :) */
 export const DataManager = ({ children }) => {
   const { balanceDispatch } = useContext(BalanceContext);
   const { walletState } = useContext(WalletContext);
   const { txTrackerState, txTrackerDispatch } = useContext(TxTrackerContext);
+  const { nftDispatch } = useContext(NftContext);
 
   const { activeAccount } = walletState;
 
@@ -39,14 +43,65 @@ export const DataManager = ({ children }) => {
     }
   };
 
-  // Fetch CKB Balance on active account change
+  const fetchSudtBalance = async (sudtArgs, activeAccount, balanceDispatch) => {
+    if (activeAccount) {
+      try {
+        const balance = await sudtService.fetchUdtBalance({
+          lockScript: activeAccount.lockScript,
+          sudtArgs: sudtArgs,
+        });
+
+        console.log("fetchSudtBalance", {
+          sudtArgs,
+          lockHash: activeAccount.lockHash,
+          balance: balance.toString(),
+        });
+
+        balanceDispatch({
+          type: BalanceActions.SetSudtBalance,
+          lockHash: activeAccount.lockHash,
+          sudtArgs: sudtArgs,
+          balance,
+        });
+      } catch (error) {
+        console.warn("fetchSudtBalance", error);
+      }
+    }
+  };
+
+  const fetchNfts = async (activeAccount, nftDispatch) => {
+    if (activeAccount) {
+      try {
+        const nfts = await nftService.fetchNfts(
+          activeAccount.lockScript,
+          activeAccount.lockScript
+        );
+
+        nftDispatch({
+          type: NftActions.SetNfts,
+          ownerLockHash: activeAccount.lockHash,
+          nfts: nfts,
+        });
+      } catch (error) {
+        console.warn("fetchNfts", error);
+      }
+    }
+  };
+
+  // Fetch Balances on active account change
   useEffect(() => {
     if (activeAccount) {
       (async () => {
         await fetchCkbBalance(activeAccount, balanceDispatch);
+        await fetchSudtBalance(
+          activeAccount.lockHash,
+          activeAccount,
+          balanceDispatch
+        ); // Fetch balance of user's own SUDT
+        await fetchNfts(activeAccount, nftDispatch);
       })();
     }
-  }, [activeAccount, balanceDispatch]);
+  }, [activeAccount, balanceDispatch, nftDispatch]);
 
   // Fetch tracked transaction status + ckb balance on block update
   useInterval(async () => {
@@ -71,7 +126,13 @@ export const DataManager = ({ children }) => {
         });
       }
       if (activeAccount) {
-        fetchCkbBalance(activeAccount, balanceDispatch);
+        await fetchCkbBalance(activeAccount, balanceDispatch);
+        await fetchSudtBalance(
+          activeAccount.lockHash,
+          activeAccount,
+          balanceDispatch
+        );
+        await fetchNfts(activeAccount, nftDispatch);
       }
     }
   }, 1000);

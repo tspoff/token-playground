@@ -2,7 +2,7 @@ import React from "react";
 import { formatBalance } from "../../utils/formatters";
 
 interface Props {
-  amount: string | null;
+  amount: string | undefined;
   showPlaceholder?: boolean;
 }
 

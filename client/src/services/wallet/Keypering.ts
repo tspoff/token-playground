@@ -1,9 +1,10 @@
-import { Transaction } from "./DappService";
-import { Account, parseAccounts } from "../utils/Account";
-import { fromTxSkeleton, toRawWitness } from "../utils/keyperringUtils";
+import { Transaction } from "../DappService";
+import { Account, parseAccounts } from "../../utils/Account";
+import { fromTxSkeleton, toRawWitness } from "../../utils/keyperringUtils";
 import { HexString } from "@ckb-lumos/base";
+import { Wallet } from "./Wallet";
 
-class WalletService {
+export class Keypering implements Wallet {
   walletUri: string;
   token: string | undefined;
 
@@ -77,7 +78,7 @@ class WalletService {
       body: JSON.stringify({
         id: 4,
         jsonrpc: "2.0",
-        method: "sign_transaction",
+        method: "sign_and_send_transaction",
         params: {
           tx: rawTx,
           lockHash,
@@ -100,7 +101,3 @@ class WalletService {
     ) as HexString[]; // Return string array of witnesses
   }
 }
-
-export const walletService = new WalletService(
-  process.env.REACT_APP_KEYPERRING_URI
-);

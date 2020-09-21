@@ -8,12 +8,9 @@ import {
   Form,
 } from "./common/Form";
 import Button from "./common/Button";
-import { dappService, CkbTransferParams } from "../services/DappService";
-import { WalletContext } from "../stores/WalletStore";
-import { getConfig } from "../config/lumosConfig";
+import { isWalletConnected, WalletContext } from "../stores/WalletStore";
 import { TransactionStatusList } from "./TransactionStatusList";
-import { toShannons } from "../utils/formatters";
-import { keyperingService } from "../services/wallet/Keypering";
+import { nftService, GenerateNFTParams } from "../services/NftService";
 import {
   TxTrackerContext,
   TxTrackerActions,
@@ -25,35 +22,35 @@ type Inputs = {
   amount: string;
 };
 
-const TransferCkbForm = () => {
+const GenerateNftForm = () => {
   const { walletState } = useContext(WalletContext);
   const { txTrackerDispatch } = useContext(TxTrackerContext);
   const [error, setError] = useState("");
 
-  const defaultTxFee = getConfig().DEFAULT_TX_FEE;
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { register, handleSubmit, watch, errors } = useForm<Inputs>();
   const onSubmit = async (formData) => {
-    if (!walletState.activeAccount) return;
+    if (!isWalletConnected(walletState)) return;
+
+    const { activeAccount, wallet } = walletState;
 
     try {
       setError("");
 
-      const params: CkbTransferParams = {
-        sender: walletState.activeAccount.address,
-        recipient: formData.recipientAddress,
-        amount: toShannons(formData.amount),
-        txFee: defaultTxFee,
+      const params: GenerateNFTParams = {
+        fromAddress: activeAccount.address,
+        governanceLock: activeAccount.lockScript,
+        owner: formData.recipientAddress,
       };
 
-      const tx = await dappService.buildTransferCkbTx(params);
+      const tx = await nftService.buildGenerateNft(params);
 
-      const signatures = await keyperingService.signTransaction(
+      const signatures = await wallet.signTransaction(
         tx,
-        walletState.activeAccount.lockHash
+        activeAccount.lockHash
       );
-      const txHash = await dappService.transferCkb(params, signatures);
+
+      const txHash = await nftService.generateNft(params, signatures);
 
       txTrackerDispatch({
         type: TxTrackerActions.SetTrackedTxStatus,
@@ -68,7 +65,7 @@ const TransferCkbForm = () => {
   return (
     <FormWrapper onSubmit={handleSubmit(onSubmit)}>
       <Form>
-        <FormTitle>Transfer CKB</FormTitle>
+        <FormTitle>Generate NFT</FormTitle>
         <label htmlFor="recipientAddress">Recipient Address</label>
         <FormInput
           type="text"
@@ -78,24 +75,14 @@ const TransferCkbForm = () => {
         {errors.recipientAddress && (
           <FormError>Please enter recipient address</FormError>
         )}
-        <label htmlFor="amount">Amount</label>
-        <FormInput
-          type="number"
-          name="amount"
-          step="0.00000001"
-          ref={register({ required: true })}
-        />
-        {errors.amount && <FormError>Please enter amount</FormError>}
         <Button disabled={!walletState.activeAccount} type="submit">
-          Transfer
+          Generate
         </Button>
-        {error.length > 0 && (
-          <FormError>{error}</FormError>
-        )}
+        {error.length > 0 && <FormError>{error}</FormError>}
       </Form>
       <TransactionStatusList />
     </FormWrapper>
   );
 };
 
-export default TransferCkbForm;
+export default GenerateNftForm;

@@ -1,0 +1,228 @@
+import React, { useState, useContext } from "react";
+import styled from "styled-components";
+import { Grid, Row, Col, CenteredRow } from "../common/Grid";
+import Modal from "../common/Modal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import AddressView from "../AddressView";
+import { keyperingService } from "../../services/wallet/Keypering";
+import { WalletActions, WalletContext } from "../../stores/WalletStore";
+import {
+  Modals,
+  ModalActions,
+  ModalContext,
+  WalletModalPanels,
+} from "../../stores/ModalStore";
+import { BalanceContext } from "../../stores/BalanceStore";
+import CkbValue from "../common/CkbValue";
+import { WalletConnectCard } from "./WalletConnectCard";
+import { Wallets, walletService } from "../../services/wallet/WalletService";
+
+const ModalWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const HeaderRow = styled(Row)`
+  padding: 10px 0px;
+  padding-top: 20px;
+  border-bottom: 1px solid black;
+`;
+
+const ErrorMsg = styled.p`
+  color: red;
+`;
+
+const ContentWrapper = styled.div`
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const WalletModal = () => {
+  const { walletState, walletDispatch } = useContext(WalletContext);
+  const { balanceState } = useContext(BalanceContext);
+  const { modalState, modalDispatch } = useContext(ModalContext);
+  const [error, setError] = useState("");
+
+  const dismissModal = () => {
+    modalDispatch({
+      type: ModalActions.setModalState,
+      modalName: Modals.walletModal,
+      newState: { visible: false },
+    });
+  };
+
+  let walletText = {
+    address: "-",
+    pubKeyHash: "-",
+    lockHash: "-",
+    balance: "-",
+    title: "-",
+  };
+
+  const connectWallet = async (walletType) => {
+    try {
+      setError("");
+
+      let wallet;
+
+      switch (walletType) {
+        case "KEYPERING":
+          wallet = await walletService.connect("KEYPERING", {
+            walletUri: process.env.REACT_APP_KEYPERING_URI,
+          });
+          break;
+        case "SYNAPSE":
+          wallet = await walletService.connect("SYNAPSE", {
+            walletUri: process.env.REACT_APP_NODE_URI,
+            injectedCkb: window.ckb,
+          });
+          break;
+        default:
+          throw new Error(`Invalid wallet type ${walletType} specified`);
+      }
+
+      const accounts = await wallet.getAccounts();
+      const activeAccount = accounts[0]; // Secp256k1 lock script for address
+
+      // Add account info to local store
+      walletDispatch({
+        type: WalletActions.addAccounts,
+        accounts,
+      });
+
+      walletDispatch({
+        type: WalletActions.setActiveAccount,
+        lockHash: activeAccount.lockHash,
+      });
+
+      walletDispatch({
+        type: WalletActions.setWallet,
+        wallet: wallet,
+      });
+
+      // Change modal to show connection success
+      modalDispatch({
+        type: ModalActions.setModalState,
+        modalName: Modals.walletModal,
+        newState: { activePanel: WalletModalPanels.VIEW_ACCOUNT },
+      });
+    } catch (e) {
+      setError("Wallet authorization refused");
+    }
+  };
+
+  const connectSynapse = async () => {
+    await connectWallet("SYNAPSE");
+  };
+
+  const connectKeypering = async () => {
+    await connectWallet("KEYPERING");
+  };
+
+  const account = walletState.activeAccount;
+  let balance = null;
+
+  /* Display balance if already fetched */
+  if (account && balanceState.ckbBalances[account.lockHash]) {
+    balance = balanceState.ckbBalances[account.lockHash].toString();
+  }
+
+  /* Set wallet text based on active wallet */
+  if (account) {
+    walletText.address = account.address;
+    walletText.pubKeyHash = account.pubKeyHash;
+    walletText.lockHash = account.lockHash;
+  }
+
+  switch (modalState.walletModal.activePanel) {
+    case WalletModalPanels.CONNECT_ACCOUNT:
+      walletText.title = "Connect to Wallet";
+      break;
+    case WalletModalPanels.VIEW_ACCOUNT:
+      walletText.title = "Active Account";
+      break;
+    default:
+      walletText.title = "Unknown Panel";
+  }
+
+  const renderActivePanel = () => {
+    switch (modalState.walletModal.activePanel) {
+      case WalletModalPanels.CONNECT_ACCOUNT:
+        return renderWalletConnectPanel();
+      case WalletModalPanels.VIEW_ACCOUNT:
+        return renderWalletInfoPanel();
+      default:
+        return renderWalletInfoPanel();
+    }
+  };
+
+  const renderWalletConnectPanel = () => {
+    return (
+      <React.Fragment>
+        <CenteredRow>
+          <WalletConnectCard
+            name={"Keypering"}
+            onClick={connectKeypering}
+            logo={"keypering.png"}
+            alt={"Keypering Logo"}
+          />
+        </CenteredRow>
+        <CenteredRow>
+          <WalletConnectCard
+            name={"Synapse"}
+            onClick={connectSynapse}
+            logo={"synapse.png"}
+            alt={"Synapse Logo"}
+          />
+        </CenteredRow>
+      </React.Fragment>
+    );
+  };
+
+  const renderWalletInfoPanel = () => {
+    return (
+      <React.Fragment>
+        <CenteredRow>
+          <AddressView address={walletText.address} copyButton identicon />
+        </CenteredRow>
+        <CenteredRow>
+          <p>
+            Ckb Balance:{" "}
+            <CkbValue amount={balance} showPlaceholder={!balance} />
+          </p>
+        </CenteredRow>
+      </React.Fragment>
+    );
+  };
+
+  //@ts-ignore
+  return (
+    <Modal
+      onDismiss={dismissModal}
+      visible={modalState[Modals.walletModal].visible}
+    >
+      <ModalWrapper>
+        <Grid>
+          <HeaderRow>
+            <Col size={15}>
+              <p>{walletText.title}</p>
+            </Col>
+            <Col size={1}>
+              <FontAwesomeIcon onClick={dismissModal} icon={faTimes} />
+            </Col>
+          </HeaderRow>
+          <ContentWrapper>{renderActivePanel()}</ContentWrapper>
+          {error && (
+            <CenteredRow>
+              <ErrorMsg>{error}</ErrorMsg>
+            </CenteredRow>
+          )}
+        </Grid>
+      </ModalWrapper>
+    </Modal>
+  );
+};
+
+export default WalletModal;

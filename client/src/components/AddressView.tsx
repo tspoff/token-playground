@@ -16,7 +16,7 @@ const CenteredColWithMargin = styled(CenteredCol)`
 
 interface Props {
   address: string;
-  shorten: boolean;
+  shorten?: boolean;
   identicon?: boolean;
   copyButton?: boolean;
 }

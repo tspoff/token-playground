@@ -2,6 +2,7 @@ import { HexString, Hash, Script } from "@ckb-lumos/base";
 import { TransactionSkeletonType } from "@ckb-lumos/helpers";
 import { Api } from "./Api";
 import { TxMap } from "../stores/TxTrackerStore";
+import { GenerateNFT, TransferNFT } from "./NftService";
 
 export interface CkbTransferParams {
   sender: string;
@@ -10,7 +11,7 @@ export interface CkbTransferParams {
   txFee: BigInt;
 }
 
-export type Transaction = GenericTransaction | CkbTransfer;
+export type Transaction = GenericTransaction | CkbTransfer | GenerateNFT | TransferNFT;
 
 export interface GenericTransaction {
   params: any;
@@ -51,16 +52,15 @@ class DappService {
   }
 
   async buildTransferCkbTx(params: CkbTransferParams): Promise<CkbTransfer> {
-    const response = await Api.post(this.dappServerUri, "/ckb/build-transfer", {
+    const response = await Api.post(this.dappServerUri, "/sudt/build-issue-sudt", {
       sender: params.sender,
-      recipient: params.recipient,
       amount: params.amount.toString(),
       txFee: params.txFee.toString(),
     });
 
     const data = response.payload;
     data.params = parseCkbTransferParams(data.params);
-    data.description = "Hello Lumos - CKB Transfer Request"; // Description to display on Keyperring
+    data.description = "Token Playground - CKB Transfer Request"; // Description to display on Keyperring
     return data;
   }
 
@@ -68,7 +68,7 @@ class DappService {
     params: CkbTransferParams,
     signatures: HexString[]
   ): Promise<Hash> {
-    const response = await Api.post(this.dappServerUri, "/ckb/send-transfer", {
+    const response = await Api.post(this.dappServerUri, "/sudt/issue-sudt", {
       params: stringifyCkbTransferParams(params),
       signatures,
     });

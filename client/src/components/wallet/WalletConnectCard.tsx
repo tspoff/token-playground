@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import ActionButton from "./common/ActionButton";
+import ActionButton from "../common/ActionButton";
 
 const Wrapper = styled.div`
   border: 1px solid black;
@@ -24,7 +24,7 @@ interface Props {
 }
 
 export const WalletConnectCard = (props: Props) => {
-  const { name, onClick } = props;
+  const { name, onClick, logo, alt} = props;
   return (
     <Wrapper>
       <Image src="keyperring.png" alt={"Keyperring Logo"} />

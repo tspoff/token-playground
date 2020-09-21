@@ -4,18 +4,16 @@ import { Grid, Row, Col, CenteredRow } from "./common/Grid";
 import Modal from "./common/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import AddressView from "./AddressView";
-import { walletService } from "../services/WalletService";
-import { WalletActions, WalletContext } from "../stores/WalletStore";
+import { WalletContext } from "../stores/WalletStore";
 import {
   Modals,
   ModalActions,
   ModalContext,
-  WalletModalPanels,
+  TransferModalPanels,
 } from "../stores/ModalStore";
 import { BalanceContext } from "../stores/BalanceStore";
-import CkbValue from "./common/CkbValue";
-import { WalletConnectCard } from "./WalletConnectCard";
+import TransferCkbForm from "./TransferCkbForm";
+import TransferUdtForm from "./TransferUdtForm";
 
 const ModalWrapper = styled.div`
   display: flex;
@@ -38,7 +36,7 @@ const ContentWrapper = styled.div`
   flex-direction: column;
 `;
 
-const WalletModal = () => {
+const TransferModal = () => {
   const { walletState, walletDispatch } = useContext(WalletContext);
   const { balanceState } = useContext(BalanceContext);
   const { modalState, modalDispatch } = useContext(ModalContext);
@@ -47,52 +45,15 @@ const WalletModal = () => {
   const dismissModal = () => {
     modalDispatch({
       type: ModalActions.setModalState,
-      modalName: Modals.walletModal,
+      modalName: Modals.transferModal,
       newState: { visible: false },
     });
   };
 
   let walletText = {
     address: "-",
-    pubKeyHash: "-",
-    lockHash: "-",
     balance: "-",
     title: "-",
-  };
-
-  const keyperringAuthRequest = async () => {
-    try {
-      setError("");
-
-      const token = await walletService.requestAuth(
-        "Hello Lumos - Connection Request"
-      );
-
-      walletService.setToken(token);
-
-      const accounts = await walletService.getAccounts();
-      const activeAccount = accounts[0]; // Secp256k1 lock script for address
-
-      // Add account info to local store
-      walletDispatch({
-        type: WalletActions.addAccounts,
-        accounts,
-      });
-
-      walletDispatch({
-        type: WalletActions.setActiveAccount,
-        lockHash: activeAccount.lockHash,
-      });
-
-      // Change modal to show connection success
-      modalDispatch({
-        type: ModalActions.setModalState,
-        modalName: Modals.walletModal,
-        newState: { activePanel: WalletModalPanels.VIEW_ACCOUNT },
-      });
-    } catch (e) {
-      setError("Wallet authorization refused");
-    }
   };
 
   const account = walletState.activeAccount;
@@ -106,15 +67,13 @@ const WalletModal = () => {
   /* Set wallet text based on active wallet */
   if (account) {
     walletText.address = account.address;
-    walletText.pubKeyHash = account.pubKeyHash;
-    walletText.lockHash = account.lockHash;
   }
 
   switch (modalState.walletModal.activePanel) {
-    case WalletModalPanels.CONNECT_ACCOUNT:
+    case TransferModalPanels.CONNECT_ACCOUNT:
       walletText.title = "Connect to Wallet";
       break;
-    case WalletModalPanels.VIEW_ACCOUNT:
+    case TransferModalPanels.VIEW_ACCOUNT:
       walletText.title = "Active Account";
       break;
     default:
@@ -123,40 +82,37 @@ const WalletModal = () => {
 
   const renderActivePanel = () => {
     switch (modalState.walletModal.activePanel) {
-      case WalletModalPanels.CONNECT_ACCOUNT:
-        return renderWalletConnectPanel();
-      case WalletModalPanels.VIEW_ACCOUNT:
-        return renderWalletInfoPanel();
+      case TransferModalPanels.TRANSFER_CKB:
+        return renderTransferCKBPanel();
+      case TransferModalPanels.TRANSFER_SUDT:
+        return renderTransferSUDTPanel();
+      case TransferModalPanels.TRANSFER_NFT:
+        return renderTransferNFTPanel();
       default:
-        return renderWalletInfoPanel();
+        return renderTransferCKBPanel();
     }
   };
 
-  const renderWalletConnectPanel = () => {
+  const renderTransferCKBPanel = () => {
     return (
       <React.Fragment>
-        <CenteredRow>
-          <WalletConnectCard
-            name={"Keypering"}
-            onClick={keyperringAuthRequest}
-          />
-        </CenteredRow>
+        <TransferCkbForm />
       </React.Fragment>
     );
   };
 
-  const renderWalletInfoPanel = () => {
+  const renderTransferSUDTPanel = () => {
     return (
       <React.Fragment>
-        <CenteredRow>
-          <AddressView address={walletText.address} copyButton identicon />
-        </CenteredRow>
-        <CenteredRow>
-          <p>
-            Ckb Balance:{" "}
-            <CkbValue amount={balance} showPlaceholder={!balance} />
-          </p>
-        </CenteredRow>
+        <TransferUdtForm />
+      </React.Fragment>
+    );
+  };
+
+  const renderTransferNFTPanel = () => {
+    return (
+      <React.Fragment>
+        <TransferCkbForm />
       </React.Fragment>
     );
   };
@@ -189,4 +145,4 @@ const WalletModal = () => {
   );
 };
 
-export default WalletModal;
+export default TransferModal;

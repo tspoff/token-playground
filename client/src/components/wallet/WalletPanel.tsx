@@ -5,8 +5,8 @@ import {
   ModalActions,
   ModalContext,
   WalletModalPanels,
-} from "../stores/ModalStore";
-import { WalletContext } from "../stores/WalletStore";
+} from "../../stores/ModalStore";
+import { WalletContext } from "../../stores/WalletStore";
 
 const WalletPanel = () => {
   const { walletState } = useContext(WalletContext);

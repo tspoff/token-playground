@@ -1,4 +1,5 @@
 import React, { createContext, useReducer } from "react";
+import {Hash} from "@ckb-lumos/base";
 import { Transaction } from "../services/DappService";
 import _ from "lodash";
 
@@ -15,8 +16,15 @@ export interface WalletModal extends Modal {
   error?: string;
 }
 
+export interface TransferModal extends Modal {
+  activePanel?: TransferModalPanels;
+  assetId?: Hash;
+  error?: string;
+}
+
 interface State {
   walletModal: WalletModal;
+  transferModal: TransferModal;
 }
 
 export enum WalletModalPanels {
@@ -24,12 +32,20 @@ export enum WalletModalPanels {
   CONNECT_ACCOUNT,
 }
 
+export enum TransferModalPanels {
+  TRANSFER_CKB,
+  TRANSFER_SUDT,
+  TRANSFER_NFT,
+}
+
 export enum Modals {
   walletModal = "walletModal",
+  transferModal = "transferModal",
 }
 
 export enum ModalActions {
   setModalState = "setModalState",
+  setModalError = "setModalError",
 }
 
 const initialState: State = {
@@ -37,12 +53,17 @@ const initialState: State = {
     visible: false,
     activePanel: WalletModalPanels.CONNECT_ACCOUNT,
   },
+  transferModal: {
+    visible: false,
+  },
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case ModalActions.setModalState:
       return setModalState(state, action.modalName, action.newState);
+    case ModalActions.setModalError:
+      return setModalError(state, action.modalName, action.error);
     default:
       return state;
   }
@@ -52,6 +73,12 @@ const setModalState = (state, modalName: string, modalState: Modal) => {
   const newState = _.cloneDeep(state);
   newState[modalName] = { ...state[modalName], ...modalState };
   newState[modalName].error = undefined; // Clear Error
+  return newState;
+};
+
+const setModalError = (state, modalName: string, error: string) => {
+  const newState = _.cloneDeep(state);
+  newState[modalName].error = error;
   return newState;
 };
 

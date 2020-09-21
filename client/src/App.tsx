@@ -3,14 +3,20 @@ import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
 import Header from "./components/Header";
-import WalletModal from "./components/WalletModal";
+import WalletModal from "./components/wallet/WalletModal";
 import * as dotenv from "dotenv";
 import { ModalStore } from "./stores/ModalStore";
 import { BalanceStore } from "./stores/BalanceStore";
 import { WalletStore } from "./stores/WalletStore";
-import { HelloCkb } from "./pages/HelloCkb";
+import { NftDetailPage } from "./pages/NftDetailPage";
+import { NftGeneratePage } from "./pages/NftGeneratePage";
+import { NftListPage } from "./pages/NftListPage";
 import { DataManager } from "./components/DataManager";
 import { TxTrackerStore } from "./stores/TxTrackerStore";
+import { NftStore } from "./stores/NftStore";
+import { SudtIssuePage } from "./pages/SudtIssuePage";
+import { AssetListPage } from "./pages/AssetListPage";
+import { SudtDetailPage } from "./pages/SudtDetailPage";
 
 dotenv.config();
 
@@ -32,24 +38,40 @@ function App() {
       <WalletStore>
         <ModalStore>
           <TxTrackerStore>
-            <DataManager>
-              <div className="App">
-                <div className="app-shell">
-                  <Header />
-                  <WalletModal />
-                  <Container>
-                    <ContentWrapper>
-                      <HashRouter>
-                        <Switch>
-                          <Route path="/hello-ckb" component={HelloCkb} />
-                          <Redirect from="/" to="/hello-ckb" />
-                        </Switch>
-                      </HashRouter>
-                    </ContentWrapper>
-                  </Container>
+            <NftStore>
+              <DataManager>
+                <div className="App">
+                  <div className="app-shell">
+                    <HashRouter>
+                      <Header />
+                      <WalletModal />
+                      <Container>
+                        <ContentWrapper>
+                          <Switch>
+                            <Route path="/list-nfts" component={NftListPage} />
+                            <Route
+                              path="/generate-nft"
+                              component={NftGeneratePage}
+                            />
+                            <Route path="/nft/:id" component={NftDetailPage} />
+                            <Route
+                              path="/issue-sudt"
+                              component={SudtIssuePage}
+                            />
+                            <Route path="/assets/" component={AssetListPage} />
+                            <Route
+                              path="/asset/:id"
+                              component={SudtDetailPage}
+                            />
+                            <Redirect from="/" to="/hello-ckb" />
+                          </Switch>
+                        </ContentWrapper>
+                      </Container>
+                    </HashRouter>
+                  </div>
                 </div>
-              </div>
-            </DataManager>
+              </DataManager>
+            </NftStore>
           </TxTrackerStore>
         </ModalStore>
       </WalletStore>
