@@ -2,7 +2,7 @@ import { indexer, rpc } from "../index";
 import { Script } from "@ckb-lumos/base";
 import { common, secp256k1Blake160 } from "@ckb-lumos/common-scripts";
 import { TransactionSkeleton } from "@ckb-lumos/helpers";
-import { Cell } from "ckb-js-toolkit";
+import { Cell } from "@ckb-lumos/base";
 
 interface CkbTransferParams {
   sender: string;
@@ -10,6 +10,31 @@ interface CkbTransferParams {
   amount: string;
   txFee: string;
 }
+
+export const findCapacityCells = async (lockScript: Script, amount: BigInt): Promise<Cell[]> => {
+  let foundCapacity = BigInt(0);
+  const capacityCells = [] as Cell[];
+
+  const collector = indexer.collector({ lock: lockScript, type: null });
+
+  const cells: Cell[] = [];
+  for await (const cell of collector.collect()) {
+    cells.push(cell);
+  }
+
+  for (const cell of cells) {
+    if (foundCapacity < amount) {
+      foundCapacity = foundCapacity + BigInt(cell.cell_output.capacity)
+      capacityCells.push(cell)
+    }
+    if (foundCapacity > amount) break;
+  }
+
+  if (foundCapacity < amount) throw new Error (`Insufficient capacity cells found`)
+
+  return capacityCells;
+};
+
 
 export const getCkbBalance = async (lockScript: Script) => {
   let balance = BigInt(0);

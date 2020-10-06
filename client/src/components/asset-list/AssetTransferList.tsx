@@ -1,21 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { Hash } from "@ckb-lumos/base";
-import { AssetCard } from "./AssetCard";
 import { AssetMetadata } from "../../stores/assets";
 import { AssetTableRow } from "./AssetTableRow";
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  margin: 0 auto;
-  border-radius: 5px;
-`;
-
-const ListWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   margin: 0 auto;
   border-radius: 5px;

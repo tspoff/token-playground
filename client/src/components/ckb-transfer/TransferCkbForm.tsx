@@ -6,19 +6,18 @@ import {
   FormInput,
   FormError,
   Form,
-} from "./common/Form";
-import Button from "./common/Button";
-import { dappService, CkbTransferParams } from "../services/DappService";
-import { WalletContext } from "../stores/WalletStore";
-import { getConfig } from "../config/lumosConfig";
-import { TransactionStatusList } from "./TransactionStatusList";
-import { toShannons } from "../utils/formatters";
-import { keyperingService } from "../services/wallet/Keypering";
+} from "../common/Form";
+import Button from "../common/Button";
+import { dappService, CkbTransferParams } from "../../services/DappService";
+import { isWalletConnected, WalletContext } from "../../stores/WalletStore";
+import { getConfig } from "../../config/lumosConfig";
+import { TransactionStatusList } from "../TransactionStatusList";
+import { toShannons } from "../../utils/formatters";
 import {
   TxTrackerContext,
   TxTrackerActions,
   TxStatus,
-} from "../stores/TxTrackerStore";
+} from "../../stores/TxTrackerStore";
 
 type Inputs = {
   recipientAddress: string;
@@ -35,13 +34,14 @@ const TransferCkbForm = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { register, handleSubmit, watch, errors } = useForm<Inputs>();
   const onSubmit = async (formData) => {
-    if (!walletState.activeAccount) return;
+    if (!isWalletConnected(walletState)) return;
+    const { activeAccount, wallet } = walletState;
 
     try {
       setError("");
 
       const params: CkbTransferParams = {
-        sender: walletState.activeAccount.address,
+        sender: activeAccount!.address,
         recipient: formData.recipientAddress,
         amount: toShannons(formData.amount),
         txFee: defaultTxFee,
@@ -49,9 +49,9 @@ const TransferCkbForm = () => {
 
       const tx = await dappService.buildTransferCkbTx(params);
 
-      const signatures = await keyperingService.signTransaction(
+      const signatures = await wallet!.signTransaction(
         tx,
-        walletState.activeAccount.lockHash
+        activeAccount!.lockHash
       );
       const txHash = await dappService.transferCkb(params, signatures);
 
@@ -89,9 +89,7 @@ const TransferCkbForm = () => {
         <Button disabled={!walletState.activeAccount} type="submit">
           Transfer
         </Button>
-        {error.length > 0 && (
-          <FormError>{error}</FormError>
-        )}
+        {error.length > 0 && <FormError>{error}</FormError>}
       </Form>
       <TransactionStatusList />
     </FormWrapper>

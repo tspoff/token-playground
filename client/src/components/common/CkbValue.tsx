@@ -8,9 +8,9 @@ interface Props {
 
 const CkbValue = (props: Props) => {
   if (props.showPlaceholder) {
-    return <React.Fragment>- CKB</React.Fragment>;
+    return <React.Fragment>-</React.Fragment>;
   } else if (props.amount) {
-    return <React.Fragment>{formatBalance(props.amount.toString())} CKB</React.Fragment>;
+    return <React.Fragment>{formatBalance(props.amount.toString())}</React.Fragment>;
   } else {
     throw new Error('CkbValue component requires either a valid amount or the showPlaceholder flag');
   }

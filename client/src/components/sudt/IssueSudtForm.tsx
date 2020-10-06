@@ -43,6 +43,7 @@ const IssueSudtForm = () => {
         txFee: getConfig().DEFAULT_TX_FEE,
       };
 
+      console.log('activeAccount', activeAccount)
       const tx = await sudtService.buildIssueSudt(params);
 
       console.warn("tx", tx);

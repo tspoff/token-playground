@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 
-import { getAssetMetadata } from "../../stores/assets";
+import { getAssetMetadata, KnownAssets } from "../../stores/assets";
 import ActionButton from "../common/ActionButton";
 import { AssetData } from "./AssetTransferList";
 import CkbValue from "../common/CkbValue";
+import {
+  ModalActions,
+  ModalContext,
+  Modals,
+  TransferModalPanels,
+} from "../../stores/ModalStore";
 
 const Image = styled.img`
   max-width: 40px;
 `;
-
 
 interface Props {
   asset: AssetData;
@@ -17,7 +22,30 @@ interface Props {
 
 export const AssetTableRow = (props: Props) => {
   const { asset } = props;
+  const { modalDispatch } = useContext(ModalContext);
   const metadata = getAssetMetadata(asset.id);
+
+  const openTransferModal = () => {
+    if (asset.id === KnownAssets.CKB) {
+      modalDispatch({
+        type: ModalActions.setModalState,
+        modalName: Modals.transferModal,
+        newState: {
+          visible: true,
+          activePanel: TransferModalPanels.TRANSFER_CKB,
+        },
+      });
+    } else {
+      modalDispatch({
+        type: ModalActions.setModalState,
+        modalName: Modals.transferModal,
+        newState: {
+          visible: true,
+          activePanel: TransferModalPanels.TRANSFER_SUDT,
+        },
+      });
+    }
+  };
 
   return (
     <tr>
@@ -30,9 +58,15 @@ export const AssetTableRow = (props: Props) => {
       <td>
         <p>{metadata.name}</p>
       </td>
-      <td> <CkbValue amount={asset.balance?.toString()} showPlaceholder={!asset.balance}/></td>
       <td>
-        <ActionButton>Transfer</ActionButton>
+        {" "}
+        <CkbValue
+          amount={asset.balance?.toString()}
+          showPlaceholder={!asset.balance}
+        />
+      </td>
+      <td>
+        <ActionButton onClick={openTransferModal}>Transfer</ActionButton>
       </td>
     </tr>
   );

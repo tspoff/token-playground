@@ -120,6 +120,7 @@ class SudtService {
     params: IssueSudtParams,
     signatures: HexString[]
   ): Promise<Hash> {
+    console.log(signatures);
     const response = await Api.post(this.dappServerUri, "/sudt/issue-sudt", {
       params: {
         sender: params.sender,

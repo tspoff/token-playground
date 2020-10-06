@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Cell } from "@ckb-lumos/base";
 import { WalletContext } from "../stores/WalletStore";
 import { Grid } from "../components/common/Grid";
-import { NftList } from "../components/NftList";
+import { NftList } from "../components/nft/NftList";
 import { NftContext, NftMap } from "../stores/NftStore";
 
 export const NftListPage = () => {

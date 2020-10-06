@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { NftMap } from "../stores/NftStore";
+import { NftMap } from "../../stores/NftStore";
 import { NftCard } from "./NftCard";
 
 const Wrapper = styled.div`

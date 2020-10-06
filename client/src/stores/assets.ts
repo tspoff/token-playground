@@ -24,7 +24,7 @@ assetMetadata[KnownAssets.CKB] = {
 };
 assetMetadata["default"] = {
   name: "User Defined",
-  symbol: "???",
+  symbol: "UDT",
   decimals: BigInt(8),
   icon: unknown,
 };

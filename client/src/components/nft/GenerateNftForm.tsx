@@ -6,16 +6,16 @@ import {
   FormInput,
   FormError,
   Form,
-} from "./common/Form";
-import Button from "./common/Button";
-import { isWalletConnected, WalletContext } from "../stores/WalletStore";
-import { TransactionStatusList } from "./TransactionStatusList";
-import { nftService, GenerateNFTParams } from "../services/NftService";
+} from "../common/Form";
+import Button from "../common/Button";
+import { isWalletConnected, WalletContext } from "../../stores/WalletStore";
+import { TransactionStatusList } from "../TransactionStatusList";
+import { nftService, GenerateNFTParams } from "../../services/NftService";
 import {
   TxTrackerContext,
   TxTrackerActions,
   TxStatus,
-} from "../stores/TxTrackerStore";
+} from "../../stores/TxTrackerStore";
 
 type Inputs = {
   recipientAddress: string;
@@ -38,16 +38,16 @@ const GenerateNftForm = () => {
       setError("");
 
       const params: GenerateNFTParams = {
-        fromAddress: activeAccount.address,
-        governanceLock: activeAccount.lockScript,
+        fromAddress: activeAccount!.address,
+        governanceLock: activeAccount!.lockScript,
         owner: formData.recipientAddress,
       };
 
       const tx = await nftService.buildGenerateNft(params);
 
-      const signatures = await wallet.signTransaction(
+      const signatures = await wallet!.signTransaction(
         tx,
-        activeAccount.lockHash
+        activeAccount!.lockHash
       );
 
       const txHash = await nftService.generateNft(params, signatures);

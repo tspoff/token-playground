@@ -37,6 +37,7 @@ routes.post("/issue-sudt", async (req: any, res) => {
   const { sender, amount } = params;
   try {
     const txSkeleton = await issueSudt(params);
+    console.log('issue-sudt', JSON.stringify(txSkeleton))
     const tx = sealTransaction(txSkeleton, signatures);
     const txHash = await rpc.send_transaction(tx);
     return res.status(200).json(JSON.stringify({ txHash }));

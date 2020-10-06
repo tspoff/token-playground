@@ -17,12 +17,14 @@ export class Synapse implements Wallet {
 
     this.walletUri = walletUri;
     // http://localhost:8114
-    this.ckb = new CKB(walletUri);
+    this.ckb = injectedCkb;
 
     let walletInfo = await injectedCkb.getAddressInfo();
     if (walletInfo.data.type !== "Secp256k1") {
       throw Error("Only secp256k1 account available");
     }
+
+    const utilsCKB = new CKB(this.walletUri)
 
     this.account = {
       pubKey: walletInfo.data.publicKey.toString(),
@@ -30,10 +32,10 @@ export class Synapse implements Wallet {
         hash_type: "type",
         code_hash:
           "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
-        args: `0x${this.ckb.utils.blake160(walletInfo.data.publicKey, "hex")}`,
+        args: `0x${utilsCKB.utils.blake160(walletInfo.data.publicKey, "hex")}`,
       },
       lockHash: walletInfo.data.lock,
-      address: this.ckb.utils.pubkeyToAddress(walletInfo.data.publicKey, {
+      address: utilsCKB.utils.pubkeyToAddress(walletInfo.data.publicKey, {
         // @ts-ignore
         prefix: "ckt",
       }),
@@ -59,22 +61,20 @@ export class Synapse implements Wallet {
     };
 
     console.log(rawTx);
+
+    console.log(this.ckb)
     // @ts-ignore
-    const signed = await this.ckb.sign({ tx: rawTx });
-    console.log(signed);
+    const res = await this.ckb.sign({ tx: rawTx });
 
     // @ts-ignore
-    res = await res.json();
-
-    // @ts-ignore
-    if (res.error) {
+    if (!res.success) {
       // @ts-ignore
       throw new Error(res.message);
     }
     // @ts-ignore
     console.log(res);
     // @ts-ignore
-    return res.result.tx.witnesses.map((witness) =>
+    return res.data.tx.witnesses.map((witness) =>
       toRawWitness(witness)
     ) as HexString[]; // Return string array of witnesses
   }

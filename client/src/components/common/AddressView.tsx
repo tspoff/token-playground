@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { shortenAddress } from "../utils/formatters";
-import Identicon from "./common/Identicon";
-import { CenteredCol } from "./common/Grid";
-import { CopyButton } from "./common/CopyButton";
+import { shortenAddress } from "../../utils/formatters";
+import Identicon from "./Identicon";
+import { CenteredCol } from "./Grid";
+import { CopyButton } from "./CopyButton";
 
 const Wrapper = styled.div`
   display: flex;

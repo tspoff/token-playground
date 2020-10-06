@@ -1,23 +1,24 @@
 import React, { useState, useContext } from "react";
 import styled from "styled-components";
-import { Grid, Row, Col, CenteredRow } from "./common/Grid";
-import Modal from "./common/Modal";
+import { Grid, Row, Col } from "../common/Grid";
+import Modal from "../common/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { WalletContext } from "../stores/WalletStore";
+import { WalletContext } from "../../stores/WalletStore";
 import {
   Modals,
   ModalActions,
   ModalContext,
   TransferModalPanels,
-} from "../stores/ModalStore";
-import { BalanceContext } from "../stores/BalanceStore";
-import TransferCkbForm from "./TransferCkbForm";
-import TransferUdtForm from "./TransferUdtForm";
+} from "../../stores/ModalStore";
+import { BalanceContext } from "../../stores/BalanceStore";
+import TransferCkbForm from "../ckb-transfer/TransferCkbForm";
+import TransferUdtForm from "../sudt/TransferUdtForm";
 
 const ModalWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  max-height: 600px;
 `;
 
 const HeaderRow = styled(Row)`
@@ -37,7 +38,7 @@ const ContentWrapper = styled.div`
 `;
 
 const TransferModal = () => {
-  const { walletState, walletDispatch } = useContext(WalletContext);
+  const { walletState } = useContext(WalletContext);
   const { balanceState } = useContext(BalanceContext);
   const { modalState, modalDispatch } = useContext(ModalContext);
   const [error, setError] = useState("");
@@ -70,11 +71,14 @@ const TransferModal = () => {
   }
 
   switch (modalState.walletModal.activePanel) {
-    case TransferModalPanels.CONNECT_ACCOUNT:
-      walletText.title = "Connect to Wallet";
+    case TransferModalPanels.TRANSFER_CKB:
+      walletText.title = "Transfer CKB";
       break;
-    case TransferModalPanels.VIEW_ACCOUNT:
-      walletText.title = "Active Account";
+    case TransferModalPanels.TRANSFER_SUDT:
+      walletText.title = "Transfer sUDT";
+      break;
+    case TransferModalPanels.TRANSFER_NFT:
+      walletText.title = "Transfer NFT";
       break;
     default:
       walletText.title = "Unknown Panel";
@@ -121,7 +125,7 @@ const TransferModal = () => {
   return (
     <Modal
       onDismiss={dismissModal}
-      visible={modalState[Modals.walletModal].visible}
+      visible={modalState[Modals.transferModal].visible}
     >
       <ModalWrapper>
         <Grid>
@@ -134,11 +138,6 @@ const TransferModal = () => {
             </Col>
           </HeaderRow>
           <ContentWrapper>{renderActivePanel()}</ContentWrapper>
-          {error && (
-            <CenteredRow>
-              <ErrorMsg>{error}</ErrorMsg>
-            </CenteredRow>
-          )}
         </Grid>
       </ModalWrapper>
     </Modal>

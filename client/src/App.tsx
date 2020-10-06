@@ -3,7 +3,7 @@ import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
 import Header from "./components/Header";
-import WalletModal from "./components/wallet/WalletModal";
+import WalletModal from "./components/modals/WalletModal";
 import * as dotenv from "dotenv";
 import { ModalStore } from "./stores/ModalStore";
 import { BalanceStore } from "./stores/BalanceStore";
@@ -17,6 +17,7 @@ import { NftStore } from "./stores/NftStore";
 import { SudtIssuePage } from "./pages/SudtIssuePage";
 import { AssetListPage } from "./pages/AssetListPage";
 import { SudtDetailPage } from "./pages/SudtDetailPage";
+import TransferModal from "./components/modals/TransferModal";
 
 dotenv.config();
 
@@ -45,6 +46,7 @@ function App() {
                     <HashRouter>
                       <Header />
                       <WalletModal />
+                      <TransferModal />
                       <Container>
                         <ContentWrapper>
                           <Switch>

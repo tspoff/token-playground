@@ -2,7 +2,7 @@ import { indexer } from "../index";
 import { Script, Hash, Address } from "@ckb-lumos/base";
 import { sudt, common } from "@ckb-lumos/common-scripts";
 import { TransactionSkeleton } from "@ckb-lumos/helpers";
-import { Cell } from "@ckb-lumos/base";
+import { Cell, utils } from "@ckb-lumos/base";
 import { getConfig } from "@ckb-lumos/config-manager";
 
 export interface IssueSudtParams {
@@ -33,6 +33,7 @@ export const issueSudt = async (params: IssueSudtParams) => {
   });
 
   txSkeleton = await sudt.issueToken(txSkeleton, sender, BigInt(amount));
+  txSkeleton = await common.prepareSigningEntries(txSkeleton);
   txSkeleton = await common.payFee(txSkeleton, [sender], BigInt(txFee));
 
   return txSkeleton;
@@ -55,7 +56,7 @@ export const transferUdt = async (params: TransferSudtParams) => {
   );
 
   txSkeleton = await common.payFee(txSkeleton, [sender], BigInt(txFee));
-  
+
   return txSkeleton;
 };
 
@@ -63,25 +64,23 @@ export const getSudtBalance = async (params: GetSudtBalanceParams) => {
   const { lockScript, sudtArgs } = params;
   let sum = BigInt(0);
 
-  const collector = indexer.collector({ lock: lockScript, type: {
-    args: sudtArgs,
-    code_hash: getConfig().SCRIPTS['SUDT'].CODE_HASH,
-    hash_type: getConfig().SCRIPTS['SUDT'].HASH_TYPE,
-  } });
+  const collector = indexer.collector({
+    lock: lockScript,
+    type: {
+      args: sudtArgs,
+      code_hash: getConfig().SCRIPTS["SUDT"].CODE_HASH,
+      hash_type: getConfig().SCRIPTS["SUDT"].HASH_TYPE,
+    },
+  });
 
   const cells: Cell[] = [];
   for await (const cell of collector.collect()) {
     cells.push(cell);
   }
 
-  console.log('sudtCellsByLock', cells);
+  console.log("sudtCellsByLock", cells);
 
   return cells
-    .map((cell) =>
-      BigInt(
-        // @ts-ignore
-        cell.data
-      )
-    )
+    .map((cell) => utils.readBigUInt128LE(cell.data))
     .reduce((sum, amount) => (sum = sum += amount));
 };

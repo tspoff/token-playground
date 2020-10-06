@@ -3,7 +3,7 @@ import { Cell } from "@ckb-lumos/base";
 import { WalletContext } from "../stores/WalletStore";
 import { Grid } from "../components/common/Grid";
 import { NftContext } from "../stores/NftStore";
-import { NftCardDetailed } from "../components/NftCardDetailed";
+import { NftCardDetailed } from "../components/nft/NftCardDetailed";
 import { nftService } from "../services/NftService";
 
 export const NftDetailPage = ({ match }) => {

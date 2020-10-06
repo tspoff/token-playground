@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Cell } from "@ckb-lumos/base";
-import HashView from "./common/HashView";
+import HashView from "../common/HashView";
 import { Link } from "react-router-dom";
 
 const Wrapper = styled.div`

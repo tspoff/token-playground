@@ -4,7 +4,7 @@ import { Grid, Row, Col, CenteredRow } from "../common/Grid";
 import Modal from "../common/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import AddressView from "../AddressView";
+import AddressView from "../common/AddressView";
 import { keyperingService } from "../../services/wallet/Keypering";
 import { WalletActions, WalletContext } from "../../stores/WalletStore";
 import {
@@ -15,7 +15,7 @@ import {
 } from "../../stores/ModalStore";
 import { BalanceContext } from "../../stores/BalanceStore";
 import CkbValue from "../common/CkbValue";
-import { WalletConnectCard } from "./WalletConnectCard";
+import { WalletConnectCard } from "../wallet/WalletConnectCard";
 import { Wallets, walletService } from "../../services/wallet/WalletService";
 
 const ModalWrapper = styled.div`
@@ -109,7 +109,7 @@ const WalletModal = () => {
         newState: { activePanel: WalletModalPanels.VIEW_ACCOUNT },
       });
     } catch (e) {
-      setError("Wallet authorization refused");
+      setError(e);
     }
   };
 

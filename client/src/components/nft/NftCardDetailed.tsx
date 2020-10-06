@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { Cell } from "@ckb-lumos/base";
-import HashView from "./common/HashView";
-import { Row, Col } from "./common/Grid";
-import { generateAddress } from "../utils/scriptUtils";
-import AddressView from "./AddressView";
+import HashView from "../common/HashView";
+import { Row, Col } from "../common/Grid";
+import { generateAddress } from "../../utils/scriptUtils";
+import AddressView from "../common/AddressView";
 
 const Wrapper = styled.div`
   display: flex;
