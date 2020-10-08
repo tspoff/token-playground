@@ -24,7 +24,7 @@ export class Synapse implements Wallet {
       throw Error("Only secp256k1 account available");
     }
 
-    const utilsCKB = new CKB(this.walletUri)
+    const utilsCKB = new CKB(this.walletUri);
 
     this.account = {
       pubKey: walletInfo.data.publicKey.toString(),
@@ -59,20 +59,19 @@ export class Synapse implements Wallet {
       inputType: "",
       outputType: "",
     };
+    console.log("rawTx", rawTx);
 
-    console.log(rawTx);
-
-    console.log(this.ckb)
     // @ts-ignore
     const res = await this.ckb.sign({ tx: rawTx });
 
+    // @ts-ignore
+    console.log('response', res);
     // @ts-ignore
     if (!res.success) {
       // @ts-ignore
       throw new Error(res.message);
     }
-    // @ts-ignore
-    console.log(res);
+
     // @ts-ignore
     return res.data.tx.witnesses.map((witness) =>
       toRawWitness(witness)

@@ -5,7 +5,6 @@ import Modal from "../common/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import AddressView from "../common/AddressView";
-import { keyperingService } from "../../services/wallet/Keypering";
 import { WalletActions, WalletContext } from "../../stores/WalletStore";
 import {
   Modals,
@@ -17,6 +16,8 @@ import { BalanceContext } from "../../stores/BalanceStore";
 import CkbValue from "../common/CkbValue";
 import { WalletConnectCard } from "../wallet/WalletConnectCard";
 import { Wallets, walletService } from "../../services/wallet/WalletService";
+import synapse from "../../assets/synapse.png";
+import keypering from "../../assets/keypering.png";
 
 const ModalWrapper = styled.div`
   display: flex;
@@ -165,7 +166,7 @@ const WalletModal = () => {
           <WalletConnectCard
             name={"Keypering"}
             onClick={connectKeypering}
-            logo={"keypering.png"}
+            logo={keypering}
             alt={"Keypering Logo"}
           />
         </CenteredRow>
@@ -173,7 +174,7 @@ const WalletModal = () => {
           <WalletConnectCard
             name={"Synapse"}
             onClick={connectSynapse}
-            logo={"synapse.png"}
+            logo={synapse}
             alt={"Synapse Logo"}
           />
         </CenteredRow>

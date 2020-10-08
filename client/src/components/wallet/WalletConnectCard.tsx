@@ -12,22 +12,24 @@ const Wrapper = styled.div`
 `;
 
 const Image = styled.img`
-    max-width: 100px;
-    max-height: 100px;
-    margin: auto;
-    padding: 10px;
+  max-width: 100px;
+  max-height: 100px;
+  margin: auto;
+  padding: 10px;
 `;
 
 interface Props {
   name: string;
   onClick: any;
+  logo: string;
+  alt: string;
 }
 
 export const WalletConnectCard = (props: Props) => {
-  const { name, onClick, logo, alt} = props;
+  const { name, onClick, logo, alt } = props;
   return (
     <Wrapper>
-      <Image src="keyperring.png" alt={"Keyperring Logo"} />
+      <Image src={logo} alt={alt} />
       <p>{name}</p>
       <ActionButton onClick={onClick}>Connect</ActionButton>
     </Wrapper>
