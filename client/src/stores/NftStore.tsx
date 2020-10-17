@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React, { createContext, useReducer } from "react";
-import { Hash, Cell } from "@ckb-lumos/base";
+import { Hash, Cell, Script } from "@ckb-lumos/base";
 
 // Fetch NFTS on - Initial load w/ account, account switch, new block
 export interface NftMap {
@@ -30,6 +30,13 @@ export const reducer = (state, action) => {
       return state;
   }
 };
+
+// export const getOwnedNftsByGovernance = (state, governanceLock: Script): NftMap => {
+//   const ownedNfts: NftMap = {};
+//   for (const key of Object.keys(state.nfts)) {
+//     state.nfts[key].
+//   }
+// }
 
 export const setNfts = (state, ownerLockHash, nfts: Cell[]) => {
   const newState = _.cloneDeep(state);

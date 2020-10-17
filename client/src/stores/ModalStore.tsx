@@ -1,5 +1,5 @@
 import React, { createContext, useReducer } from "react";
-import {Hash} from "@ckb-lumos/base";
+import {Cell, Hash} from "@ckb-lumos/base";
 import { Transaction } from "../services/DappService";
 import _ from "lodash";
 
@@ -20,6 +20,7 @@ export interface TransferModal extends Modal {
   activePanel?: TransferModalPanels;
   assetId?: Hash;
   error?: string;
+  nftCell?: Cell;
 }
 
 interface State {

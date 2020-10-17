@@ -30,8 +30,6 @@ export const DataManager = ({ children }) => {
           activeAccount.lockScript
         );
 
-        console.log("fetchCkbBalance", activeAccount, balance);
-
         balanceDispatch({
           type: BalanceActions.SetCkbBalance,
           lockHash: activeAccount.lockHash,
@@ -51,11 +49,11 @@ export const DataManager = ({ children }) => {
           sudtArgs: sudtArgs,
         });
 
-        console.log("fetchSudtBalance", {
-          sudtArgs,
-          lockHash: activeAccount.lockHash,
-          balance: balance.toString(),
-        });
+        // console.log("fetchSudtBalance", {
+        //   sudtArgs,
+        //   lockHash: activeAccount.lockHash,
+        //   balance: balance.toString(),
+        // });
 
         balanceDispatch({
           type: BalanceActions.SetSudtBalance,
@@ -72,10 +70,11 @@ export const DataManager = ({ children }) => {
   const fetchNfts = async (activeAccount, nftDispatch) => {
     if (activeAccount) {
       try {
-        const nfts = await nftService.fetchNfts(
-          activeAccount.lockScript,
+        const nfts = await nftService.fetchNftsByGovernanceLock(
           activeAccount.lockScript
         );
+
+        console.log('fetchedNFTs', nfts);
 
         nftDispatch({
           type: NftActions.SetNfts,
@@ -108,14 +107,14 @@ export const DataManager = ({ children }) => {
     const latestBlock = await dappService.getLatestBlock();
 
     if (latestBlock > txTrackerState.lastFetchedBlock) {
-      console.log("latestBlock", latestBlock);
-      console.log("activeAccount", activeAccount);
       txTrackerDispatch({
         type: TxTrackerActions.SetLatestBlock,
         latestBlock,
       });
 
       const pendingTx = getPendingTx(txTrackerState.trackedTx);
+
+      console.log(pendingTx);
 
       if (pendingTx.length > 0) {
         dappService.fetchTransactionStatuses(pendingTx).then((txStatuses) => {

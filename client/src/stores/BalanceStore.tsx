@@ -45,9 +45,6 @@ export const getAssetBalancesForAddress = (
   const ckbBalance = state.ckbBalances[lockHash];
   const assets = [] as AssetData[];
 
-  console.log(sudtIds);
-  console.log('state', state, lockHash);
-
   if (ckbBalance) {
     assets.push({
       id: KnownAssets.CKB,
@@ -63,7 +60,6 @@ export const getAssetBalancesForAddress = (
       });
   }
 
-  console.log('assets', assets)
   return assets;
 };
 
@@ -87,7 +83,6 @@ export const setSudtBalance = (
   sudtArgs: string,
   balance: BigInt
 ) => {
-  console.log('setSudtBalance', state, lockHash, sudtArgs, balance);
   const newState = _.cloneDeep(state);
   _.set(newState.sudtBalances, `${sudtArgs}.${lockHash}`, balance);
   return newState;

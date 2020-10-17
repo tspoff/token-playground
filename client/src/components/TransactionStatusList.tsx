@@ -88,7 +88,7 @@ export const TransactionStatusList = () => {
     <Wrapper>
       {numTx > 0 && (
         <React.Fragment>
-          <h3>Your Transfers</h3>
+          <h3>Your Transactions</h3>
           <Grid>{renderListItems()}</Grid>
         </React.Fragment>
       )}

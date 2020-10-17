@@ -11,8 +11,6 @@ export const NftGeneratePage = () => {
   const { walletState } = useContext(WalletContext);
   const state = useContext(NftContext);
 
-  console.log(nftState, state);
-
   let nftsToDisplay: NftMap = {};
   if (walletState.activeAccount?.lockHash === nftState.ownerLockHash) {
     nftsToDisplay = nftState.nfts;

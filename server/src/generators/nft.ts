@@ -14,7 +14,7 @@ import {
   utils,
 } from "@ckb-lumos/base";
 const { CKBHasher } = utils;
-import { common, secp256k1Blake160 } from "@ckb-lumos/common-scripts";
+import { common, secp256k1Blake160 } from "../generator-scripts";
 import { getConfig, initializeConfig } from "@ckb-lumos/config-manager";
 import {
   parseAddress,
@@ -26,7 +26,7 @@ import {
 import { indexer } from "../index";
 
 // For simplicity, we hardcode 0.1 CKB as transaction fee here.
-const FEE = BigInt(10000000);
+const FEE = BigInt(1*10**8);
 export const CONFIG = getConfig();
 
 function buildNftTypeScript(governanceLock: Script): Script {

@@ -17,6 +17,7 @@ import {
   TxStatus,
 } from "../../stores/TxTrackerStore";
 import { getConfig } from "../../config/lumosConfig";
+import { toShannons } from "../../utils/formatters";
 
 type Inputs = {
   recipientAddress: string;
@@ -39,14 +40,11 @@ const IssueSudtForm = () => {
 
       const params: IssueSudtParams = {
         sender: activeAccount!.address,
-        amount: formData.amount,
+        amount: toShannons(formData.amount),
         txFee: getConfig().DEFAULT_TX_FEE,
       };
 
-      console.log('activeAccount', activeAccount)
       const tx = await sudtService.buildIssueSudt(params);
-
-      console.warn("tx", tx);
 
       const signatures = await wallet!.signTransaction(
         tx,

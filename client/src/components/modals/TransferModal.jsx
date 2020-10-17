@@ -14,6 +14,7 @@ import {
 import { BalanceContext } from "../../stores/BalanceStore";
 import TransferCkbForm from "../ckb-transfer/TransferCkbForm";
 import TransferUdtForm from "../sudt/TransferUdtForm";
+import TransferNftForm from "../nft/TransferNftForm";
 
 const ModalWrapper = styled.div`
   display: flex;
@@ -70,7 +71,7 @@ const TransferModal = () => {
     walletText.address = account.address;
   }
 
-  switch (modalState.walletModal.activePanel) {
+  switch (modalState[Modals.transferModal].activePanel) {
     case TransferModalPanels.TRANSFER_CKB:
       walletText.title = "Transfer CKB";
       break;
@@ -85,7 +86,7 @@ const TransferModal = () => {
   }
 
   const renderActivePanel = () => {
-    switch (modalState.walletModal.activePanel) {
+    switch (modalState[Modals.transferModal].activePanel) {
       case TransferModalPanels.TRANSFER_CKB:
         return renderTransferCKBPanel();
       case TransferModalPanels.TRANSFER_SUDT:
@@ -116,7 +117,7 @@ const TransferModal = () => {
   const renderTransferNFTPanel = () => {
     return (
       <React.Fragment>
-        <TransferCkbForm />
+        <TransferNftForm nftCell={modalState[Modals.transferModal].nftCell}/>
       </React.Fragment>
     );
   };

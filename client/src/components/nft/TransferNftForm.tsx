@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Cell } from "@ckb-lumos/base";
 import {
   FormWrapper,
   FormTitle,
@@ -8,55 +9,53 @@ import {
   Form,
 } from "../common/Form";
 import Button from "../common/Button";
-import { dappService, CkbTransferParams } from "../../services/DappService";
 import { isWalletConnected, WalletContext } from "../../stores/WalletStore";
-import { getConfig } from "../../config/lumosConfig";
 import { TransactionStatusList } from "../TransactionStatusList";
-import { toShannons } from "../../utils/formatters";
+import { nftService, GenerateNFTParams, TransferNFTParams } from "../../services/NftService";
 import {
   TxTrackerContext,
   TxTrackerActions,
   TxStatus,
 } from "../../stores/TxTrackerStore";
 
+interface Props {
+  nftCell: Cell;
+}
+
 type Inputs = {
   recipientAddress: string;
-  amount: string;
 };
 
-const TransferCkbForm = () => {
+const TransferNftForm = (props: Props) => {
   const { walletState } = useContext(WalletContext);
   const { txTrackerDispatch } = useContext(TxTrackerContext);
+
   const [error, setError] = useState("");
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { register, handleSubmit, watch, errors } = useForm<Inputs>();
   const onSubmit = async (formData) => {
     if (!isWalletConnected(walletState)) return;
+
     const { activeAccount, wallet } = walletState;
 
     try {
       setError("");
 
-      const params: CkbTransferParams = {
-        sender: activeAccount!.address,
-        recipient: formData.recipientAddress,
-        amount: toShannons(formData.amount),
-        txFee: getConfig().DEFAULT_TX_FEE,
+      const params: TransferNFTParams = {
+        fromAddress: activeAccount!.address,
+        toAddress: formData.recipientAddress,
+        nftCell: props.nftCell,
       };
 
-      console.log('TransferCkbForm Params', params);
-
-      const tx = await dappService.buildTransferCkbTx(params);
-      console.log('generated, unsigned TX', tx);
+      const tx = await nftService.buildTransferNft(params);
 
       const signatures = await wallet!.signTransaction(
         tx,
         activeAccount!.lockHash
       );
 
-      console.log('signed TX signatures', signatures);
-      const txHash = await dappService.transferCkb(params, signatures);
+      const txHash = await nftService.transferNft(params, signatures);
 
       txTrackerDispatch({
         type: TxTrackerActions.SetTrackedTxStatus,
@@ -71,7 +70,7 @@ const TransferCkbForm = () => {
   return (
     <FormWrapper onSubmit={handleSubmit(onSubmit)}>
       <Form>
-        <FormTitle>Transfer CKB</FormTitle>
+        <FormTitle>Transfer NFT</FormTitle>
         <label htmlFor="recipientAddress">Recipient Address</label>
         <FormInput
           type="text"
@@ -81,14 +80,6 @@ const TransferCkbForm = () => {
         {errors.recipientAddress && (
           <FormError>Please enter recipient address</FormError>
         )}
-        <label htmlFor="amount">Amount</label>
-        <FormInput
-          type="number"
-          name="amount"
-          step="0.00000001"
-          ref={register({ required: true })}
-        />
-        {errors.amount && <FormError>Please enter amount</FormError>}
         <Button disabled={!walletState.activeAccount} type="submit">
           Transfer
         </Button>
@@ -99,4 +90,4 @@ const TransferCkbForm = () => {
   );
 };
 
-export default TransferCkbForm;
+export default TransferNftForm;

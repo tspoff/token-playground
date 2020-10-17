@@ -58,13 +58,11 @@ class SudtService {
 
   async fetchUdtBalance(params: FetchUdtBalanceParams): Promise<BigInt> {
     const {lockScript, sudtArgs} = params
-    console.log(lockScript);
     const response = await Api.post(this.dappServerUri, "/sudt/get-balance", {
       sudtArgs,
       lockScript,
     });
 
-    console.log("fetchUdtBalance", response.payload);
     return BigInt(response.payload.balance);
   }
 
@@ -81,8 +79,6 @@ class SudtService {
       }
     );
 
-    console.log(response);
-
     const data = response.payload;
     return data;
   }
@@ -95,7 +91,6 @@ class SudtService {
       params,
       signatures,
     });
-    console.log(response);
 
     return response.payload.txHash as Hash;
   }
@@ -110,7 +105,6 @@ class SudtService {
         txFee: params.txFee.toString(),
       }
     );
-    console.log(response);
 
     const data = response.payload;
     return data;
@@ -120,7 +114,6 @@ class SudtService {
     params: IssueSudtParams,
     signatures: HexString[]
   ): Promise<Hash> {
-    console.log(signatures);
     const response = await Api.post(this.dappServerUri, "/sudt/issue-sudt", {
       params: {
         sender: params.sender,
@@ -129,8 +122,6 @@ class SudtService {
       },
       signatures,
     });
-    console.log(response);
-
     return response.payload.txHash as Hash;
   }
 }

@@ -18,6 +18,7 @@ import { SudtIssuePage } from "./pages/SudtIssuePage";
 import { AssetListPage } from "./pages/AssetListPage";
 import { SudtDetailPage } from "./pages/SudtDetailPage";
 import TransferModal from "./components/modals/TransferModal";
+import { TokenSaleListPage } from "./pages/TokenSaleListPage";
 
 dotenv.config();
 
@@ -64,6 +65,10 @@ function App() {
                             <Route
                               path="/asset/:id"
                               component={SudtDetailPage}
+                            />
+                            <Route
+                              path="/token-sale"
+                              component={TokenSaleListPage}
                             />
                             <Redirect from="/" to="/hello-ckb" />
                           </Switch>

@@ -27,7 +27,7 @@ export const AssetTransferList = (props: Props) => {
 
   const renderListItems = () => {
     return assets.map((asset) => {
-      return <AssetTableRow asset={asset} />;
+      return <AssetTableRow key={asset.id} asset={asset} />;
     });
   };
 
@@ -35,6 +35,7 @@ export const AssetTransferList = (props: Props) => {
     <Wrapper>
       {assets.length > 0 && (
         <table>
+          <tbody>
           <tr>
             <th>Icon</th>
             <th>Symbol</th>
@@ -42,6 +43,7 @@ export const AssetTransferList = (props: Props) => {
             <th>Account Balance</th>
           </tr>
           {renderListItems()}
+          </tbody>
         </table>
       )}
       {assets.length === 0 && "No assets found for active account"}
