@@ -63,6 +63,7 @@ export const AssetTableRow = (props: Props) => {
         <CkbValue
           amount={asset.balance?.toString()}
           showPlaceholder={!asset.balance}
+          decimals={metadata.decimals}
         />
       </td>
       <td>

@@ -19,6 +19,7 @@ import { AssetListPage } from "./pages/AssetListPage";
 import { SudtDetailPage } from "./pages/SudtDetailPage";
 import TransferModal from "./components/modals/TransferModal";
 import { TokenSaleListPage } from "./pages/TokenSaleListPage";
+import { CreatePage } from "./pages/CreatePage";
 
 dotenv.config();
 
@@ -55,6 +56,10 @@ function App() {
                             <Route
                               path="/generate-nft"
                               component={NftGeneratePage}
+                            />
+                            <Route
+                              path="/create"
+                              component={CreatePage}
                             />
                             <Route path="/nft/:id" component={NftDetailPage} />
                             <Route

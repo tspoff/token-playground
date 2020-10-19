@@ -7,7 +7,7 @@ import { NftContext, NftMap } from "../stores/NftStore";
 export const TokenSaleListPage = () => {
   return (
     <Grid>
-      <h1>Your Token Sales</h1>
+      <h1>Token Sales</h1>
     </Grid>
   );
 };

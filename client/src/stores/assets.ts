@@ -25,7 +25,7 @@ assetMetadata[KnownAssets.CKB] = {
 assetMetadata["default"] = {
   name: "User Defined",
   symbol: "UDT",
-  decimals: BigInt(8),
+  decimals: BigInt(0),
   icon: unknown,
 };
 assetMetadata[KnownAssets.METER] = {
