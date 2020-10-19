@@ -4,6 +4,6 @@ You must must first connect your wallet in order to interact with the dApp funct
 ![Connect Wallet](./images/connect-wallet.gif)
 
 ## Functionality Guides
-* Mint & transfer sUDTs ([guide](./docs/sudt.md))
-* Mint & transfer NFTs ([guide](./docs/nft.md))
-* Run token sales ([guide](./docs/token-sale.md))
+* Mint & transfer sUDTs ([guide](./sudt.md))
+* Mint & transfer NFTs ([guide](./nft.md))
+* Run token sales ([guide](./token-sale.md))
