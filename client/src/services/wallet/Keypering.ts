@@ -51,7 +51,6 @@ export class Keypering implements Wallet {
         }),
       });
       res = await res.json();
-      console.log(res);
       // @ts-ignore
       return parseAccounts(res.result.addresses);
     } catch (error) {
@@ -61,7 +60,6 @@ export class Keypering implements Wallet {
 
   async signTransaction(tx: Transaction, lockHash): Promise<HexString[]> {
     const rawTx = fromTxSkeleton(tx.txSkeleton);
-    console.log(tx.txSkeleton);
 
     rawTx.witnesses[0] = {
       lock: "",
@@ -69,7 +67,6 @@ export class Keypering implements Wallet {
       outputType: "",
     };
 
-    console.log(rawTx);
     let res = await fetch(this.walletUri, {
       method: "POST",
       headers: {
@@ -94,7 +91,6 @@ export class Keypering implements Wallet {
       // @ts-ignore
       throw new Error(res.message);
     }
-    console.log(res);
     // @ts-ignore
     return res.result.tx.witnesses.map((witness) =>
       toRawWitness(witness)

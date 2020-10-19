@@ -52,25 +52,23 @@ export class Synapse implements Wallet {
 
   async signTransaction(tx: Transaction, lockHash): Promise<HexString[]> {
     const rawTx = fromTxSkeleton(tx.txSkeleton);
-    console.log(tx.txSkeleton);
 
     rawTx.witnesses[0] = {
       lock: "",
       inputType: "",
       outputType: "",
     };
-    console.log("rawTx", rawTx);
 
     // @ts-ignore
     const res = await this.ckb.sign({ tx: rawTx });
 
     // @ts-ignore
-    console.log('response', res);
-    // @ts-ignore
     if (!res.success) {
       // @ts-ignore
       throw new Error(res.message);
     }
+
+    console.log('raw-response', res);
 
     // @ts-ignore
     return res.data.tx.witnesses.map((witness) =>

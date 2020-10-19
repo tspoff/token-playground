@@ -34,8 +34,6 @@ const TransferUdtForm = () => {
   const { txTrackerDispatch } = useContext(TxTrackerContext);
   const [error, setError] = useState("");
 
-  const defaultTxFee = getConfig().DEFAULT_TX_FEE;
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { register, handleSubmit, watch, errors } = useForm<Inputs>();
   const onSubmit = async (formData) => {
@@ -51,8 +49,10 @@ const TransferUdtForm = () => {
         sender: activeAccount!.address,
         recipient: formData.recipientAddress,
         amount: toShannons(formData.amount),
-        txFee: defaultTxFee,
+        txFee: getConfig().DEFAULT_TX_FEE,
       };
+
+      console.log('TransferSudtParams', params);
 
       const tx = await sudtService.buildTransferSudt(params);
 
@@ -60,6 +60,8 @@ const TransferUdtForm = () => {
         tx,
         activeAccount!.lockHash
       );
+
+      console.log(tx, signatures);
       const txHash = await sudtService.transferSudt(params, signatures);
 
       txTrackerDispatch({

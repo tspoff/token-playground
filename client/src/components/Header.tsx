@@ -52,17 +52,15 @@ const Header = () => {
         </Title>
       </HeaderElement>
       <HeaderElement>
-        <Link to="assets">Assets</Link>
+        <Link to="/assets">Assets</Link>
       </HeaderElement>
       <HeaderElement>
-        <Link to="issue-sudt">Issue Sudt</Link>
+        <Link to="/token-sale">Token Sales</Link>
       </HeaderElement>
       <HeaderElement>
-        <Link to="list-nfts">NFTs</Link>
+        <Link to="/create">Create Tokens</Link>
       </HeaderElement>
-      <HeaderElement>
-        <Link to="generate-nft">Generate NFT</Link>
-      </HeaderElement>
+
       <HeaderElement>
         <WalletInfo />
       </HeaderElement>

@@ -1,6 +1,6 @@
 import { indexer } from "../index";
 import { Script, Hash, Address } from "@ckb-lumos/base";
-import { sudt, common } from "@ckb-lumos/common-scripts";
+import { sudt, common } from "../generator-scripts";
 import { TransactionSkeleton } from "@ckb-lumos/helpers";
 import { Cell, utils } from "@ckb-lumos/base";
 import { getConfig } from "@ckb-lumos/config-manager";
@@ -33,8 +33,8 @@ export const issueSudt = async (params: IssueSudtParams) => {
   });
 
   txSkeleton = await sudt.issueToken(txSkeleton, sender, BigInt(amount));
-  txSkeleton = await common.prepareSigningEntries(txSkeleton);
   txSkeleton = await common.payFee(txSkeleton, [sender], BigInt(txFee));
+  txSkeleton = await common.prepareSigningEntries(txSkeleton);
 
   return txSkeleton;
 };
@@ -77,8 +77,6 @@ export const getSudtBalance = async (params: GetSudtBalanceParams) => {
   for await (const cell of collector.collect()) {
     cells.push(cell);
   }
-
-  console.log("sudtCellsByLock", cells);
 
   return cells
     .map((cell) => utils.readBigUInt128LE(cell.data))

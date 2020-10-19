@@ -37,7 +37,6 @@ class DappService {
   }
 
   async fetchTransactionStatuses(txHashes: Hash[]) {
-    console.log("fetchTransactionStatuses", txHashes);
     const response = await Api.post(this.dappServerUri, "/fetch-tx-status", {
       txHashes,
     });
@@ -52,8 +51,9 @@ class DappService {
   }
 
   async buildTransferCkbTx(params: CkbTransferParams): Promise<CkbTransfer> {
-    const response = await Api.post(this.dappServerUri, "/sudt/build-issue-sudt", {
+    const response = await Api.post(this.dappServerUri, "/ckb/build-transfer", {
       sender: params.sender,
+      recipient: params.recipient,
       amount: params.amount.toString(),
       txFee: params.txFee.toString(),
     });
@@ -68,7 +68,7 @@ class DappService {
     params: CkbTransferParams,
     signatures: HexString[]
   ): Promise<Hash> {
-    const response = await Api.post(this.dappServerUri, "/sudt/issue-sudt", {
+    const response = await Api.post(this.dappServerUri, "/ckb/send-transfer", {
       params: stringifyCkbTransferParams(params),
       signatures,
     });

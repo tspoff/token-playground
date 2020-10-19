@@ -25,6 +25,7 @@ interface GenerateNFTParams {
 const routes = express.Router();
 
 routes.post("/build-transfer", async (req: any, res) => {
+  console.log('build-transfer params', req.body);
   const { nftCell, toAddress } = req.body;
   try {
     const txSkeleton = await transferNftToken(nftCell, toAddress);
@@ -96,7 +97,6 @@ routes.post("/get-nfts", async (req: any, res) => {
 
 routes.post("/get-nft-by-id", async (req: any, res) => {
   const { governanceLock, nftId } = req.body;
-  console.log("/get-nft-by-id", nftId);
   try {
     const nftCells: Cell[] = await getNftById(governanceLock, nftId);
     console.log(nftCells);

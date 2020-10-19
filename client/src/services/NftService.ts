@@ -32,8 +32,19 @@ class NftService {
     this.dappServerUri = dappServerUri;
   }
 
+  async fetchNftsByGovernanceLock(governanceLock: Script): Promise<Cell[]> {
+    const response = await Api.post(
+      this.dappServerUri,
+      "/nft/get-nfts",
+      {
+        governanceLock,
+      }
+    );
+
+    return response.payload.nftCells;
+  }
+
   async fetchNfts(governanceLock: Script, lockScript: Script): Promise<Cell[]> {
-    console.log(lockScript);
     const response = await Api.post(
       this.dappServerUri,
       "/nft/get-nfts-by-lock",
@@ -43,7 +54,6 @@ class NftService {
       }
     );
 
-    console.log('nftCells', response.payload.nftCells);
     return response.payload.nftCells;
   }
 
@@ -63,17 +73,14 @@ class NftService {
   }
 
   async buildTransferNft(
-    nftCell: Cell,
-    fromAddress: Address,
-    toAddress: Address
+    params: TransferNFTParams
   ): Promise<TransferNFT> {
+    console.log('params', params);
     const response = await Api.post(this.dappServerUri, "/nft/build-transfer", {
-      nftCell,
-      fromAddress,
-      toAddress,
+      nftCell: params.nftCell,
+      fromAddress: params.fromAddress,
+      toAddress: params.toAddress,
     });
-
-    console.log(response);
 
     const data = response.payload;
     return data;
@@ -87,7 +94,6 @@ class NftService {
       params,
       signatures,
     });
-    console.log(response);
 
     return response.payload.txHash as Hash;
   }
@@ -100,7 +106,6 @@ class NftService {
       governanceLock: params.governanceLock,
       owner: params.owner,
     });
-    console.log(response);
 
     const data = response.payload;
     return data;
@@ -114,7 +119,6 @@ class NftService {
       params,
       signatures,
     });
-    console.log(response);
 
     return response.payload.txHash as Hash;
   }

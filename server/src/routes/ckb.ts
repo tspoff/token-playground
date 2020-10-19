@@ -1,7 +1,6 @@
 import express from "express";
 import { indexer, rpc } from "../index";
 import { Script } from "@ckb-lumos/base";
-import { common, secp256k1Blake160 } from "@ckb-lumos/common-scripts";
 import { TransactionSkeleton, sealTransaction } from "@ckb-lumos/helpers";
 import { buildTransferCkbTx, getCkbBalance } from "../generators/ckb";
 
@@ -35,6 +34,7 @@ routes.post("/send-transfer", async (req: any, res) => {
   try {
     const txSkeleton = await buildTransferCkbTx(params);
     const tx = sealTransaction(txSkeleton, signatures);
+    console.log('send-transfer', signatures, tx);
     const txHash = await rpc.send_transaction(tx);
     return res.status(200).json(JSON.stringify({ txHash }));
   } catch (error) {

@@ -14,9 +14,6 @@ export const AssetListPage = () => {
     assetsToDisplay = getAssetBalancesForAddress(balanceState, walletState.activeAccount.lockHash);
   }
 
-  console.log('assetsToDisplay', assetsToDisplay);
-
-
   return (
     <Grid>
       <h1>Assets</h1>

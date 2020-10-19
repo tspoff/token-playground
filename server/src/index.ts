@@ -16,6 +16,7 @@ import ckbRoutes from "./routes/ckb";
 import generalRoutes from "./routes/general";
 import nftRoutes from "./routes/nft";
 import sudtRoutes from "./routes/sudt";
+import sudtSaleRoutes from "./routes/sudt-sale";
 
 // Initialize Services
 export const rpc = new RPC(process.env.RPC_URL);
@@ -42,6 +43,7 @@ app.use("/indexer", indexerRoutes);
 app.use("/ckb", ckbRoutes);
 app.use("/nft", nftRoutes);
 app.use("/sudt", sudtRoutes);
+app.use("/sudt-sale", sudtSaleRoutes);
 
 app.listen(process.env.PORT, () => {
   indexer.startForever();

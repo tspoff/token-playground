@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { Cell } from "@ckb-lumos/base";
 import HashView from "../common/HashView";
 import { Row, Col } from "../common/Grid";
 import { generateAddress } from "../../utils/scriptUtils";
 import AddressView from "../common/AddressView";
+import ActionButton from "../common/ActionButton";
+import { ModalActions, ModalContext, Modals, TransferModalPanels } from "../../stores/ModalStore";
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,7 +29,23 @@ interface Props {
 }
 
 export const NftCardDetailed = (props: Props) => {
+  const { modalDispatch } = useContext(ModalContext);
   const { nftCell } = props;
+
+  console.log('NftCardDetailed Props', props);
+
+  const openTransferModal = () => {
+      modalDispatch({
+        type: ModalActions.setModalState,
+        modalName: Modals.transferModal,
+        newState: {
+          visible: true,
+          nftCell: nftCell,
+          activePanel: TransferModalPanels.TRANSFER_NFT,
+        },
+      });
+  };
+
   return (
     <Wrapper>
       <Image src={`http://robohash.org/${nftCell.data}`} alt="NFT Robohash" />
@@ -42,6 +60,9 @@ export const NftCardDetailed = (props: Props) => {
       </DetailsWrapper>
       <div>
         Id: <HashView hash={nftCell.data} />
+      </div>
+      <div>
+      <ActionButton onClick={openTransferModal}>Transfer</ActionButton>
       </div>
     </Wrapper>
   );

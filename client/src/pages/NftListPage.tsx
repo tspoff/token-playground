@@ -10,19 +10,24 @@ export const NftListPage = () => {
   const { walletState } = useContext(WalletContext);
   const state = useContext(NftContext);
 
-  console.log(nftState, state);
-
-  let nftsToDisplay: NftMap = {};
+  let ownedNfts: NftMap = {};
+  console.log('NftListPage: ownedNfts', ownedNfts);
   if (walletState.activeAccount?.lockHash === nftState.ownerLockHash) {
-    nftsToDisplay = nftState.nfts;
+    ownedNfts = nftState.nfts;
   }
 
-  console.log('nftsToDisplay', nftsToDisplay, nftState.ownerLockHash, walletState.activeAccount?.lockHash);
+  let governedNfts: NftMap = {};
+  if (walletState.activeAccount?.lockHash === nftState.ownerLockHash) {
+    governedNfts = nftState.nfts;
+  }
 
   return (
     <Grid>
-      <h1>Your NFTs</h1>
-      <NftList nfts={nftsToDisplay} />
+      <h1>Your Owned NFTs</h1>
+      <p>(Only shows NFTs with the governance lock of the active account)</p>
+      <NftList nfts={ownedNfts} />
+      <h1>Your Governed NFTs</h1>
+      <NftList nfts={governedNfts} />
     </Grid>
   );
 };

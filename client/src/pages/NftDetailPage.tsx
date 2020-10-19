@@ -36,8 +36,6 @@ export const NftDetailPage = ({ match }) => {
     })();
   }, [nftId, nftDispatch, acccountAccount]);
 
-  console.log("nftsToDisplay", loading, nft);
-
   return (
     <Grid>
       {loading && <p>Loading...</p>}

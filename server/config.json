@@ -44,6 +44,13 @@
       "TX_HASH": "0xc308fa563867cb891e5c18adb95fcb8045f7a12054fdb60258770fd0cedf941f",
       "INDEX": "0x0",
       "DEP_TYPE": "code"
+    },
+    "SUDT_SALE": {
+        "CODE_HASH": "0x790420c4244a42e732f8065c275b541695a66c7348f885bb3d9b52d83b279115",
+        "HASH_TYPE": "data",
+        "TX_HASH": "0xc308fa563867cb891e5c18adb95fcb8045f7a12054fdb60258770fd0cedf941f",
+        "INDEX": "0x0",
+        "DEP_TYPE": "code"
     }
   }
 }

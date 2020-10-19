@@ -24,7 +24,7 @@ export interface Config {
 }
 
 const LINA = {
-  DEFAULT_TX_FEE: BigInt(10000000),
+  DEFAULT_TX_FEE: BigInt(1*10**8),
   PREFIX: "ckb",
   SCRIPTS: {
     SECP256K1_BLAKE160: {

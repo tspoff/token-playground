@@ -29,8 +29,6 @@ const TransferCkbForm = () => {
   const { txTrackerDispatch } = useContext(TxTrackerContext);
   const [error, setError] = useState("");
 
-  const defaultTxFee = getConfig().DEFAULT_TX_FEE;
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { register, handleSubmit, watch, errors } = useForm<Inputs>();
   const onSubmit = async (formData) => {
@@ -44,15 +42,20 @@ const TransferCkbForm = () => {
         sender: activeAccount!.address,
         recipient: formData.recipientAddress,
         amount: toShannons(formData.amount),
-        txFee: defaultTxFee,
+        txFee: getConfig().DEFAULT_TX_FEE,
       };
 
+      console.log('TransferCkbForm Params', params);
+
       const tx = await dappService.buildTransferCkbTx(params);
+      console.log('generated, unsigned TX', tx);
 
       const signatures = await wallet!.signTransaction(
         tx,
         activeAccount!.lockHash
       );
+
+      console.log('signed TX signatures', signatures);
       const txHash = await dappService.transferCkb(params, signatures);
 
       txTrackerDispatch({

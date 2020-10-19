@@ -49,7 +49,11 @@ export const formatBalance = (
     .decimalPlaces(precision, BigNumber.ROUND_DOWN)
     .toString();
 
-  return padToDecimalPlaces(result, 1);
+    if (decimals === 0) {
+      return padToDecimalPlaces(result, 0);
+    } else {
+      return padToDecimalPlaces(result, 1);
+    }
 };
 
 export const padToDecimalPlaces = (
@@ -57,7 +61,7 @@ export const padToDecimalPlaces = (
   minDecimals: number
 ): string => {
   const split = value.split(".");
-  const zerosToPad = split[1] ? minDecimals - split[1].length : minDecimals;
+  let zerosToPad = split[1] ? minDecimals - split[1].length : minDecimals;
 
   if (zerosToPad > 0) {
     let pad = "";
