@@ -26,6 +26,11 @@ export interface CkbTransfer {
 }
 
 class DappService {
+  /**
+   * Wrapper class for native CKB transfers and RPC calls on token-playground server instance
+   * @remarks Instantiated as a singleton using the env-specified REACT_APP_DAPP_SERVER_URI URL
+   */
+
   dappServerUri: string;
   constructor(dappServerUri) {
     this.dappServerUri = dappServerUri;

@@ -27,19 +27,20 @@ export interface GenerateNFT {
 }
 
 class NftService {
+  /**
+   * Wrapper class for NFT related routes on token-playground server instance
+   * @remarks Instantiated as a singleton using the env-specified REACT_APP_DAPP_SERVER_URI URL
+   */
+
   dappServerUri: string;
   constructor(dappServerUri) {
     this.dappServerUri = dappServerUri;
   }
 
   async fetchNftsByGovernanceLock(governanceLock: Script): Promise<Cell[]> {
-    const response = await Api.post(
-      this.dappServerUri,
-      "/nft/get-nfts",
-      {
-        governanceLock,
-      }
-    );
+    const response = await Api.post(this.dappServerUri, "/nft/get-nfts", {
+      governanceLock,
+    });
 
     return response.payload.nftCells;
   }
@@ -57,7 +58,10 @@ class NftService {
     return response.payload.nftCells;
   }
 
-  async fetchNftById(governanceLock: Script, nftId: string): Promise<Cell | undefined> {
+  async fetchNftById(
+    governanceLock: Script,
+    nftId: string
+  ): Promise<Cell | undefined> {
     const response = await Api.post(this.dappServerUri, "/nft/get-nft-by-id", {
       governanceLock,
       nftId,
@@ -72,10 +76,8 @@ class NftService {
     }
   }
 
-  async buildTransferNft(
-    params: TransferNFTParams
-  ): Promise<TransferNFT> {
-    console.log('params', params);
+  async buildTransferNft(params: TransferNFTParams): Promise<TransferNFT> {
+    console.log("params", params);
     const response = await Api.post(this.dappServerUri, "/nft/build-transfer", {
       nftCell: params.nftCell,
       fromAddress: params.fromAddress,
@@ -98,9 +100,7 @@ class NftService {
     return response.payload.txHash as Hash;
   }
 
-  async buildGenerateNft(
-    params: GenerateNFTParams
-  ): Promise<GenerateNFT> {
+  async buildGenerateNft(params: GenerateNFTParams): Promise<GenerateNFT> {
     const response = await Api.post(this.dappServerUri, "/nft/build-generate", {
       fromAddress: params.fromAddress,
       governanceLock: params.governanceLock,

@@ -15,7 +15,8 @@ import {
 import { BalanceContext } from "../../stores/BalanceStore";
 import CkbValue from "../common/CkbValue";
 import { WalletConnectCard } from "../wallet/WalletConnectCard";
-import { Wallets, walletService } from "../../services/wallet/WalletService";
+import { TransactionStatusList } from "../TransactionStatusList";
+import { walletService } from "../../services/wallet/WalletService";
 import synapse from "../../assets/synapse.png";
 import keypering from "../../assets/keypering.png";
 
@@ -63,7 +64,7 @@ const WalletModal = () => {
   };
 
   const connectWallet = async (walletType) => {
-    try {
+    // try {
       setError("");
 
       let wallet;
@@ -109,9 +110,9 @@ const WalletModal = () => {
         modalName: Modals.walletModal,
         newState: { activePanel: WalletModalPanels.VIEW_ACCOUNT },
       });
-    } catch (e) {
-      setError(e);
-    }
+    // } catch (e) {
+    //   setError(e);
+    // }
   };
 
   const connectSynapse = async () => {
@@ -162,14 +163,14 @@ const WalletModal = () => {
   const renderWalletConnectPanel = () => {
     return (
       <React.Fragment>
-        <CenteredRow>
+        {/* <CenteredRow>
           <WalletConnectCard
             name={"Keypering"}
             onClick={connectKeypering}
             logo={keypering}
             alt={"Keypering Logo"}
           />
-        </CenteredRow>
+        </CenteredRow> */}
         <CenteredRow>
           <WalletConnectCard
             name={"Synapse"}
@@ -193,6 +194,9 @@ const WalletModal = () => {
             Ckb Balance:{" "}
             <CkbValue amount={balance} showPlaceholder={!balance} />
           </p>
+        </CenteredRow>
+        <CenteredRow>
+        <TransactionStatusList/>
         </CenteredRow>
       </React.Fragment>
     );

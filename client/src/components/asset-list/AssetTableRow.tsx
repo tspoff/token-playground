@@ -25,6 +25,11 @@ export const AssetTableRow = (props: Props) => {
   const { modalDispatch } = useContext(ModalContext);
   const metadata = getAssetMetadata(asset.id);
 
+  console.log('render asset for',{
+    asset,
+    metadata
+  })
+
   const openTransferModal = () => {
     if (asset.id === KnownAssets.CKB) {
       modalDispatch({
@@ -63,7 +68,7 @@ export const AssetTableRow = (props: Props) => {
         <CkbValue
           amount={asset.balance?.toString()}
           showPlaceholder={!asset.balance}
-          decimals={metadata.decimals}
+          decimals={BigInt(metadata.decimals)}
         />
       </td>
       <td>

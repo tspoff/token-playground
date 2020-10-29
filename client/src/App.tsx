@@ -20,6 +20,8 @@ import { SudtDetailPage } from "./pages/SudtDetailPage";
 import TransferModal from "./components/modals/TransferModal";
 import { TokenSaleListPage } from "./pages/TokenSaleListPage";
 import { CreatePage } from "./pages/CreatePage";
+import { CreateTokenSalePage } from "./pages/CreateTokenSalePage";
+import { TokenSaleStore } from "./stores/TokenSaleStore";
 
 dotenv.config();
 
@@ -40,51 +42,63 @@ function App() {
     <BalanceStore>
       <WalletStore>
         <ModalStore>
-          <TxTrackerStore>
-            <NftStore>
-              <DataManager>
-                <div className="App">
-                  <div className="app-shell">
-                    <HashRouter>
-                      <Header />
-                      <WalletModal />
-                      <TransferModal />
-                      <Container>
-                        <ContentWrapper>
-                          <Switch>
-                            <Route path="/list-nfts" component={NftListPage} />
-                            <Route
-                              path="/generate-nft"
-                              component={NftGeneratePage}
-                            />
-                            <Route
-                              path="/create"
-                              component={CreatePage}
-                            />
-                            <Route path="/nft/:id" component={NftDetailPage} />
-                            <Route
-                              path="/issue-sudt"
-                              component={SudtIssuePage}
-                            />
-                            <Route path="/assets/" component={AssetListPage} />
-                            <Route
-                              path="/asset/:id"
-                              component={SudtDetailPage}
-                            />
-                            <Route
-                              path="/token-sale"
-                              component={TokenSaleListPage}
-                            />
-                            <Redirect from="/" to="/hello-ckb" />
-                          </Switch>
-                        </ContentWrapper>
-                      </Container>
-                    </HashRouter>
+          <TokenSaleStore>
+            <TxTrackerStore>
+              <NftStore>
+                <DataManager>
+                  <div className="App">
+                    <div className="app-shell">
+                      <HashRouter>
+                        <Header />
+                        <WalletModal />
+                        <TransferModal />
+                        <Container>
+                          <ContentWrapper>
+                            <Switch>
+                              <Route
+                                path="/list-nfts"
+                                component={NftListPage}
+                              />
+                              <Route
+                                path="/generate-nft"
+                                component={NftGeneratePage}
+                              />
+                              <Route path="/create" component={CreatePage} />
+                              <Route
+                                path="/nft/:id"
+                                component={NftDetailPage}
+                              />
+                              <Route
+                                path="/issue-sudt"
+                                component={SudtIssuePage}
+                              />
+                              <Route
+                                path="/assets/"
+                                component={AssetListPage}
+                              />
+                              <Route
+                                path="/asset/:id"
+                                component={SudtDetailPage}
+                              />
+                              <Route
+                                path="/token-sale/:id"
+                                component={TokenSaleListPage}
+                              />
+                              <Route
+                                path="/create-token-sale"
+                                component={CreateTokenSalePage}
+                              />
+                              <Redirect from="/" to="/assets" />
+                            </Switch>
+                          </ContentWrapper>
+                        </Container>
+                      </HashRouter>
+                    </div>
                   </div>
-                </div>
-              </DataManager>
-            </NftStore>
-          </TxTrackerStore>
+                </DataManager>
+              </NftStore>
+            </TxTrackerStore>
+          </TokenSaleStore>
         </ModalStore>
       </WalletStore>
     </BalanceStore>

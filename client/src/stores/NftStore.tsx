@@ -38,6 +38,12 @@ export const reducer = (state, action) => {
 //   }
 // }
 
+/**
+ * 
+ * @param state Existing state
+ * @param ownerLockHash owner lock hash of NFT cells to store
+ * @param nfts NFT cells to store
+ */
 export const setNfts = (state, ownerLockHash, nfts: Cell[]) => {
   const newState = _.cloneDeep(state);
 

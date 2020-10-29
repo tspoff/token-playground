@@ -28,19 +28,20 @@ export const reducer = (state, action) => {
   switch (action.type) {
     case BalanceActions.SetCkbBalance:
       return setCkbBalance(state, action.lockHash, action.balance);
-      case BalanceActions.SetSudtBalance:
-        return setSudtBalance(state, action.lockHash, action.sudtArgs, action.balance);
+    case BalanceActions.SetSudtBalance:
+      return setSudtBalance(
+        state,
+        action.lockHash,
+        action.sudtArgs,
+        action.balance
+      );
     default:
       return state;
   }
 };
 
-
 /* Collect all known balances for a given address */
-export const getAssetBalancesForAddress = (
-  state,
-  lockHash
-): AssetData[] => {
+export const getAssetBalancesForAddress = (state, lockHash): AssetData[] => {
   const sudtIds = Object.keys(state.sudtBalances);
   const ckbBalance = state.ckbBalances[lockHash];
   const assets = [] as AssetData[];
@@ -49,7 +50,7 @@ export const getAssetBalancesForAddress = (
     assets.push({
       id: KnownAssets.CKB,
       balance: ckbBalance,
-    })
+    });
   }
 
   for (const id of sudtIds) {

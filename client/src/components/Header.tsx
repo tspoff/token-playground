@@ -55,7 +55,7 @@ const Header = () => {
         <Link to="/assets">Assets</Link>
       </HeaderElement>
       <HeaderElement>
-        <Link to="/token-sale">Token Sales</Link>
+        <Link to="/token-sale/user">Token Sales</Link>
       </HeaderElement>
       <HeaderElement>
         <Link to="/create">Create Tokens</Link>

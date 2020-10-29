@@ -1,5 +1,4 @@
-import React, { useContext } from "react";
-import { WalletContext } from "../stores/WalletStore";
+import React from "react";
 import { Grid } from "../components/common/Grid";
 import { Link } from "react-router-dom";
 import ActionButton from "../components/common/ActionButton";
@@ -15,7 +14,7 @@ export const CreatePage = () => {
         <Link to="/generate-nft">Generate NFT</Link>
       </ActionButton>
       <ActionButton>
-        <Link to="create-token-sale">Create Token Sale</Link>
+        <Link to="/create-token-sale">Create Token Sale</Link>
       </ActionButton>
     </Grid>
   );

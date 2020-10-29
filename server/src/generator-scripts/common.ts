@@ -496,9 +496,11 @@ async function _commonTransfer(
 
       for (const cellCollector of cellCollectors) {
         for await (const inputCell of cellCollector.collect()) {
-          console.log("you reached a cell!");
           const inputKey: string = getInputKey(inputCell);
-          if (!!inputCell.cell_output.type || inputCell.data !== "0x" || previousInputs.has(inputKey)) {
+          // if (!!inputCell.cell_output.type || inputCell.data !== "0x" || previousInputs.has(inputKey)) {
+          //   continue;
+          // }
+          if (previousInputs.has(inputKey)) {
             continue;
           }
           previousInputs = previousInputs.add(inputKey);

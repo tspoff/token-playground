@@ -45,6 +45,10 @@ const initialState: State = {
   lastFetchedBlock: -1,
 };
 
+/**
+ * Get pending TX from currently tracked set
+ * @param txs Transaction map to filter
+ */
 export const getPendingTx = (txs: TxMap) => {
   return Object.keys(txs).filter((txHash) => {
     return txs[txHash] === TxStatus.PENDING || txs[txHash] === TxStatus.PROPOSED;

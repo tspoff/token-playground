@@ -1,19 +1,29 @@
 import { Cell, HexString, Hash, Address, Script } from "@ckb-lumos/base";
 import { TransactionSkeletonType } from "@ckb-lumos/helpers";
+import { TokenSaleCellMetadata } from "../components/token-sale/TokenSaleCellList";
+import { getConfig } from "../config/lumosConfig";
+import { printObj } from "../utils/print";
+import {
+  computeScriptHash,
+  generateAddress,
+  parseAddress,
+} from "../utils/scriptUtils";
 import { Api } from "./Api";
 
 export interface CreateTokenSaleParams {
-  sender: Address;
+  sender: Script;
   supplyToMint: BigInt;
   pricePerToken: BigInt;
   txFee: BigInt;
 }
 
 export interface BuyTokenSaleParams {
-  udtTypeHash: Hash;
+  sudtArgs: Hash;
   sender: Address;
-  amountToBuy: BigInt;
-  txFee: BigInt;
+  recipient: Address;
+  udtAmount: string;
+  pricePerToken: string;
+  txFee: string;
 }
 
 export interface CreateTokenSale {
@@ -33,23 +43,83 @@ export interface FetchUdtBalanceParams {
   sudtArgs: Hash;
 }
 
+export interface TokenSaleCellData {
+  cells: Cell[]
+  metadata: TokenSaleCellMetadata[]
+}
+
 class TokenSaleService {
+  /**
+   * Wrapper class for token sale related routes on token-playground server instance
+   * @remarks Instantiated as a singleton using the env-specified REACT_APP_DAPP_SERVER_URI URL
+   */
+
   dappServerUri: string;
   constructor(dappServerUri) {
     this.dappServerUri = dappServerUri;
   }
 
-  async buildCreateTokenSale(params: CreateTokenSaleParams): Promise<CreateTokenSale> {
+  async fetchTokenSaleCellsByArgs(
+    sudtArgs: string
+  ): Promise<TokenSaleCellData> {
+    const response = await Api.post(
+      this.dappServerUri,
+      "/sudt-sale/get-token-sale-cells",
+      {
+        sudtArgs,
+      }
+    );
+
+    console.log("fetchTokenSaleCells", response);
+
+    return response.payload as TokenSaleCellData;
+  }
+
+  async fetchTokenSaleCells(
+    lockScript: Script
+  ): Promise<TokenSaleCellData> {
+    const lockHash = computeScriptHash(lockScript);
+    const response = await Api.post(
+      this.dappServerUri,
+      "/sudt-sale/get-token-sale-cells",
+      {
+        sudtArgs: lockHash,
+      }
+    );
+
+    console.log("fetchTokenSaleCells", response);
+
+    return response.payload as TokenSaleCellData;
+  }
+
+  /**
+   * @param params: Create token sale parameters
+   */
+  async buildCreateTokenSale(
+    params: CreateTokenSaleParams
+  ): Promise<CreateTokenSale> {
+    const sudtConfig = getConfig().SCRIPTS["SUDT"];
+
+    if (!sudtConfig) {
+      throw new Error(`No config for SUDT script found`);
+    }
+
+    const lockHash = computeScriptHash(params.sender);
+    const address = generateAddress(params.sender);
+
     const response = await Api.post(
       this.dappServerUri,
       "/sudt-sale/build-create-token-sale",
       {
-        sender: params.sender,
+        sender: address,
+        sudtArgs: lockHash,
         supplyToMint: params.supplyToMint.toString(),
         pricePerToken: params.pricePerToken.toString(),
-        txFee: params.txFee.toString()
+        txFee: params.txFee.toString(),
       }
     );
+
+    printObj(response.payload, "build-create-token-sale");
 
     const data = response.payload;
     return data;
@@ -59,10 +129,23 @@ class TokenSaleService {
     params: CreateTokenSaleParams,
     signatures: HexString[]
   ): Promise<Hash> {
-    const response = await Api.post(this.dappServerUri, "/sudt-sale/create-token-sale", {
-      params,
-      signatures,
-    });
+    const lockHash = computeScriptHash(params.sender);
+    const address = generateAddress(params.sender);
+
+    const response = await Api.post(
+      this.dappServerUri,
+      "/sudt-sale/create-token-sale",
+      {
+        params: {
+          sender: address,
+          sudtArgs: lockHash,
+          supplyToMint: params.supplyToMint.toString(),
+          pricePerToken: params.pricePerToken.toString(),
+          txFee: params.txFee.toString(),
+        },
+        signatures,
+      }
+    );
 
     return response.payload.txHash as Hash;
   }
@@ -72,10 +155,7 @@ class TokenSaleService {
       this.dappServerUri,
       "/sudt-sale/build-buy-token-sale",
       {
-        udtTypeHash: params.udtTypeHash,
-        sender: params.sender,
-        amountToBuy: params.amountToBuy.toString(),
-        txFee: params.txFee.toString()
+          params
       }
     );
 
@@ -87,10 +167,14 @@ class TokenSaleService {
     params: BuyTokenSaleParams,
     signatures: HexString[]
   ): Promise<Hash> {
-    const response = await Api.post(this.dappServerUri, "/sudt-sale/buy-token-sale", {
-      params,
-      signatures,
-    });
+    const response = await Api.post(
+      this.dappServerUri,
+      "/sudt-sale/buy-token-sale",
+      {
+        params,
+        signatures,
+      }
+    );
     return response.payload.txHash as Hash;
   }
 }

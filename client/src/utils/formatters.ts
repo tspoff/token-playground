@@ -36,7 +36,7 @@ export const generateCkbExplorerLink = (txHash: Hash) => {
 
 export const formatBalance = (
   balance: string,
-  decimals: number = 8,
+  decimals: number,
   precision: number = 8
 ): string => {
   const bn = new BigNumber(balance);

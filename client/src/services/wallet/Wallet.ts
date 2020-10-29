@@ -1,6 +1,9 @@
 import { Transaction } from "../DappService";
 
 export interface Wallet {
-    getAccounts()
-    signTransaction(tx: Transaction, lockHash)
+  /**
+   * Standardized interface for wallet connections
+   */
+  getAccounts();
+  signTransaction(tx: Transaction, lockHash);
 }

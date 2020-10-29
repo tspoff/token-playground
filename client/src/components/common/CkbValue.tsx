@@ -13,7 +13,7 @@ const CkbValue = (props: Props) => {
   } else if (props.amount) {
     return (
       <React.Fragment>
-        {formatBalance(props.amount.toString(), props.decimals ? Number(props.decimals) : 8)}
+        {formatBalance(props.amount.toString(), props.decimals !== undefined ? Number(props.decimals) : 8)}
       </React.Fragment>
     );
   } else {

@@ -15,7 +15,31 @@ import {
 } from "@ckb-lumos/base";
 const { CKBHasher, ckbHash } = utils;
 import { normalizers, Reader } from "ckb-js-toolkit";
-import { Config } from "@ckb-lumos/config-manager";
+import { Config, ScriptConfig } from "@ckb-lumos/config-manager";
+import { Transaction } from "@ckb-lumos/base/lib/core";
+
+/**
+ * Convenience function to add dependencies to txSkeleton
+ * @param txSkeleton - Existing skeleton
+ * @param templates - ScriptConfig entries to add as dependencies
+ * @returns New skeleton with dependencies added
+ */
+export function addCellDepsFromConfig(
+  txSkeleton: TransactionSkeletonType,
+  templates: ScriptConfig[]
+): TransactionSkeletonType {
+  for (const template of templates) {
+    txSkeleton = addCellDep(txSkeleton, {
+      out_point: {
+        tx_hash: template.TX_HASH,
+        index: template.INDEX,
+      },
+      dep_type: template.DEP_TYPE,
+    });
+  }
+
+  return txSkeleton;
+}
 
 export function addCellDep(
   txSkeleton: TransactionSkeletonType,

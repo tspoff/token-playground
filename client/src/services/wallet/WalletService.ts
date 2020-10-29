@@ -8,11 +8,15 @@ export enum Wallets {
 }
 
 export class WalletService {
+  /**
+   * Manages connection logic for each supported wallet
+   * @remarks Instantiated as a singleton instance for use in connecting to wallets
+   */
   async connect(walletType: Wallets, params): Promise<Wallet> {
-    console.log('connectWallet ', walletType, params);
+    console.log("connectWallet ", walletType, params);
     switch (walletType) {
       case Wallets.KEYPERING:
-        console.log(`Connect to Keypering..`)
+        console.log(`Connect to Keypering..`);
         const keypering = new Keypering(params.walletUri);
         const token = await keypering.requestAuth(
           "Token Playground - Connection Request"
@@ -20,7 +24,7 @@ export class WalletService {
         await keypering.setToken(token);
         return keypering;
       case Wallets.SYNAPSE:
-        console.log(`Connect to Synapse..`)
+        console.log(`Connect to Synapse..`);
         const synapse = new Synapse();
         await synapse.connect(params.walletUri, params.injectedCkb);
         return synapse;

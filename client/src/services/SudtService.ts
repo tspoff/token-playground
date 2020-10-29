@@ -37,27 +37,31 @@ export interface FetchUdtBalanceParams {
 }
 
 export function sudtArgsToTypeHash(args: Hash): Hash {
-
-  const sudtConfig = getConfig().SCRIPTS['SUDT'];
-  if (!sudtConfig) throw new Error(`No config for SUDT found`)
+  const sudtConfig = getConfig().SCRIPTS["SUDT"];
+  if (!sudtConfig) throw new Error(`No config for SUDT found`);
 
   const type: Script = {
     args: args,
     code_hash: sudtConfig.CODE_HASH,
-    hash_type: sudtConfig.HASH_TYPE
-  }
+    hash_type: sudtConfig.HASH_TYPE,
+  };
 
-  return computeScriptHash(type)
+  return computeScriptHash(type);
 }
 
 class SudtService {
+  /**
+   * Wrapper class for sudt related routes on token-playground server instance
+   * @remarks Instantiated as a singleton using the env-specified REACT_APP_DAPP_SERVER_URI URL
+   */
+  
   dappServerUri: string;
   constructor(dappServerUri) {
     this.dappServerUri = dappServerUri;
   }
 
   async fetchUdtBalance(params: FetchUdtBalanceParams): Promise<BigInt> {
-    const {lockScript, sudtArgs} = params
+    const { lockScript, sudtArgs } = params;
     const response = await Api.post(this.dappServerUri, "/sudt/get-balance", {
       sudtArgs,
       lockScript,

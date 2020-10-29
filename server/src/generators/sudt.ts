@@ -1,9 +1,11 @@
 import { indexer } from "../index";
 import { Script, Hash, Address } from "@ckb-lumos/base";
-import { sudt, common } from "../generator-scripts";
+// import { sudt, common } from "../generator-scripts";
+import {sudt, common} from "../generator-scripts";
 import { TransactionSkeleton } from "@ckb-lumos/helpers";
 import { Cell, utils } from "@ckb-lumos/base";
 import { getConfig } from "@ckb-lumos/config-manager";
+import { printTxSkeleton } from "../generator-scripts/print";
 
 export interface IssueSudtParams {
   sender: Address;
@@ -56,6 +58,7 @@ export const transferUdt = async (params: TransferSudtParams) => {
   );
 
   txSkeleton = await common.payFee(txSkeleton, [sender], BigInt(txFee));
+  txSkeleton = await common.prepareSigningEntries(txSkeleton);
 
   return txSkeleton;
 };

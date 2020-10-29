@@ -22,6 +22,8 @@ import {
   tokenSaleService,
 } from "../../services/TokenSaleService";
 import { Hash } from "@ckb-lumos/base";
+import { TokenSaleCells } from "../../stores/TokenSaleStore";
+import { TokenSaleCellList } from "./TokenSaleCellList";
 
 type Inputs = {
   recipientAddress: string;
@@ -30,6 +32,7 @@ type Inputs = {
 
 interface Props {
   udtTypeHash: Hash;
+  cells: TokenSaleCells;
 }
 
 const BuyTokenSaleForm = (props: Props) => {
@@ -48,9 +51,11 @@ const BuyTokenSaleForm = (props: Props) => {
 
       const params: BuyTokenSaleParams = {
         sender: activeAccount!.address,
-        amountToBuy: toShannons(formData.amount),
-        udtTypeHash: props.udtTypeHash,
-        txFee: getConfig().DEFAULT_TX_FEE,
+        recipient: activeAccount!.address,
+        udtAmount: toShannons(formData.amount).toString(),
+        pricePerToken: "100",
+        sudtArgs: props.udtTypeHash,
+        txFee: getConfig().DEFAULT_TX_FEE.toString(),
       };
 
       const tx = await tokenSaleService.buildBuyTokenSale(params);
@@ -73,10 +78,10 @@ const BuyTokenSaleForm = (props: Props) => {
   };
 
   return (
-    <FormWrapper onSubmit={handleSubmit(onSubmit)}>
-      <Form>
-        <FormTitle>Issue Sudt</FormTitle>
-        <label htmlFor="recipientAddress">Amount to Mint</label>
+    <div onSubmit={handleSubmit(onSubmit)}>
+      <form>
+        <FormTitle>Buy Sudt</FormTitle>
+        <label htmlFor="recipientAddress">Amount to Buy</label>
         <FormInput
           type="number"
           name="amount"
@@ -84,12 +89,13 @@ const BuyTokenSaleForm = (props: Props) => {
         />
         {errors.amount && <FormError>Please enter amount</FormError>}
         <Button disabled={!walletState.activeAccount} type="submit">
-          Mint
+          Buy
         </Button>
         {error.length > 0 && <FormError>{error}</FormError>}
-      </Form>
+      </form>
+      <TokenSaleCellList cells={props.cells}/>
       <TransactionStatusList />
-    </FormWrapper>
+    </div>
   );
 };
 

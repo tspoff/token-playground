@@ -15,6 +15,9 @@ export interface Response {
     Wrappers around REST calls to dApp server
 */
 export class Api {
+  /**
+   * Wrapper around API calls to token-playground server
+   */
   static async get(uri, endpoint): Promise<Response> {
     try {
       const response = await axios.get(`${uri}${endpoint}`);
@@ -38,8 +41,8 @@ export class Api {
         payload,
       };
     } catch (error) {
-      console.error(JSON.parse(error.request.response).error);
-      throw new Error(JSON.parse(error.request.response).error);
+      console.error(error);
+      throw new Error(error);
     }
   }
 }

@@ -27,6 +27,7 @@ import anyoneCanPay, {
 } from "./anyone_can_pay";
 const { ScriptValue } = values;
 import secp256k1Blake160 from "./secp256k1_blake160";
+import { printTxSkeleton } from "./print";
 
 export type Token = Hash;
 
@@ -608,9 +609,11 @@ export async function transfer(
     throw new Error("Not enough capacity for change in from infos!");
   }
   if (capacity > 0) {
+    printTxSkeleton(txSkeleton)
     throw new Error("Not enough capacity in from infos!");
   }
   if (amount > 0) {
+    printTxSkeleton(txSkeleton)
     throw new Error("Not enough amount in from infos!");
   }
 
